@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request a Commission – CommissionHub</title>
+  <meta name="description" content="Submit your commission request and bring your vision to life." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/commission.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen">
+    <div class="loader-logo">CommissionHub</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST CONTAINER ===================== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">✦ CommissionHub</a>
+
+      <ul class="nav-links">
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i> <span>Dark Mode</span></button>
+        <button class="btn btn-secondary" id="btn-logout" style="display:none;">Sign Out</button>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" id="mobile-logout" style="display:none;">Sign Out</a>
+  </div>
+
+  <!-- ===================== COMMISSION PAGE CONTENT ===================== -->
+  <section id="commission-page" class="commission-section">
+    <div class="hero-bg">
+      <div class="hero-orb commission-orb orb-primary"></div>
+      <div class="hero-orb commission-orb orb-secondary"></div>
+    </div>
+    
+    <div class="container commission-container">
+      <div class="back-nav">
+        <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      </div>
+
+      <div class="commission-form-area animate-on-scroll">
+        <div class="glass-form-panel">
+          <div class="form-header-center">
+            <h1 class="hero-title form-title-center">Request a <span class="gradient-text">Commission</span></h1>
+            <p class="section-subtitle form-subtitle-center">
+              Fill in the details below and I'll get back to you as soon as possible.
+            </p>
+          </div>
+
+          <form id="commission-form" novalidate>
+            <div class="commission-inner-form-grid">
+              <div class="form-group" id="fg-name">
+                <label class="form-label" for="req-name">Full Name *</label>
+                <input class="form-control" type="text" id="req-name" name="name" placeholder="Your full name" autocomplete="name" />
+                <span class="form-error">Please enter your full name.</span>
+              </div>
+              <div class="form-group" id="fg-email">
+                <label class="form-label" for="req-email">Email Address *</label>
+                <input class="form-control" type="email" id="req-email" name="email" placeholder="you@example.com" autocomplete="email" />
+                <span class="form-error">Please enter a valid email.</span>
+              </div>
+              <div class="form-group full" id="fg-service">
+                <label class="form-label" for="req-service">Service Type *</label>
+                <select class="form-control form-input-dark" id="req-service" name="service">
+                  <option value="">— Select a service —</option>
+                  <option value="Graphics Designing">Graphics Designing</option>
+                  <option value="Web Designing">Web Designing</option>
+                  <option value="Voice Acting">Voice Acting</option>
+                  <option value="Photo & Video Editing">Photo &amp; Video Editing</option>
+                  <option value="Game Assets Designing">Game Assets Designing</option>
+                  <option value="Other">Other</option>
+                </select>
+                <span class="form-error">Please select a service type.</span>
+              </div>
+              <div class="form-group full" id="fg-budget">
+                <label class="form-label" for="req-budget">Budget Range *</label>
+                <select class="form-control form-input-dark" id="req-budget" name="budget">
+                  <option value="">— Select a budget —</option>
+                  <option value="Under ₱1,500">Under ₱1,500</option>
+                  <option value="₱1,500 – ₱3,000">₱1,500 – ₱3,000</option>
+                  <option value="₱3,000 – ₱6,000">₱3,000 – ₱6,000</option>
+                  <option value="₱6,000 – ₱15,000">₱6,000 – ₱15,000</option>
+                  <option value="₱15,000+">₱15,000+</option>
+                </select>
+                <span class="form-error">Please select a budget range.</span>
+              </div>
+              <div class="form-group full" id="fg-deadline">
+                <label class="form-label" for="req-deadline">Project Deadline</label>
+                <input class="form-control form-input-dark" type="date" id="req-deadline" name="deadline" />
+                <span class="form-error">Please select a valid date.</span>
+              </div>
+              <div class="form-group full" id="fg-details">
+                <label class="form-label" for="req-details">Project Details *</label>
+                <textarea class="form-control form-input-dark" id="req-details" name="details" placeholder="Describe your project in as much detail as possible — style, references, deadline, any special requirements..." rows="6"></textarea>
+                <span class="form-error">Please describe your project (min. 20 characters).</span>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full form-submit-btn" id="submit-btn">
+              Send Commission Request ✦
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">✦ CommissionHub</span>
+        <p class="footer-copy">© 2026 CommissionHub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Re-using script.js for core things, and commission.js for form logic -->
+  <script src="js/script.js"></script>
+  <script src="js/commission.js"></script>
+</body>
+</html>

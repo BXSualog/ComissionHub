@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dashboard – CommissionHub</title>
+  <meta name="description" content="Your personal dashboard to request and track commissions." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen">
+    <div class="loader-logo">CommissionHub</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST CONTAINER ===================== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="index.html" class="nav-logo">✦ CommissionHub</a>
+
+      <ul class="nav-links">
+        <li><a href="commission.html" class="btn btn-primary btn-sm">Add Request</a></li>
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i> <span>Dark Mode</span></button>
+        <button class="btn btn-secondary btn-sm" id="btn-logout">Sign Out</button>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" id="mobile-logout">Sign Out</a>
+  </div>
+
+  <!-- ===================== DASHBOARD CONTENT ===================== -->
+  <section id="commission" class="dashboard-section">
+    <div class="hero-bg">
+      <div class="hero-orb dashboard-orb orb-primary"></div>
+      <div class="hero-orb dashboard-orb orb-secondary"></div>
+    </div>
+    
+    <div class="container dashboard-container">
+      
+      <!-- User Greeting -->
+      <div class="dashboard-greeting">
+        <h1 class="hero-title greeting-title">Welcome back, <span class="gradient-text">Client</span></h1>
+        <p class="section-subtitle greeting-subtitle">Manage your requests or start a new one.</p>
+      </div>
+
+      <!-- ACCOMPLISHED PROJECTS CAROUSEL -->
+      <div class="carousel-container main-carousel animate-on-scroll delay-1">
+        <h2 class="section-title carousel-section-title">Recent Accomplishments</h2>
+        
+        <div class="carousel-controls-wrapper">
+          <!-- Carousel Controls (Outside) -->
+          <button class="carousel-btn prev-btn" id="carousel-prev" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next-btn" id="carousel-next" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+            <div class="carousel-wrapper">
+            <div class="carousel-track" id="projects-carousel">
+              <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop" alt="Sleek Web Design Mockup" />
+                <div class="carousel-caption">
+                  <h3>E-Commerce Redesign</h3>
+                  <p>Web Design & UI/UX</p>
+                </div>
+              </div>
+              <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1620641788421-7a1c342ea42e?q=80&w=1200&auto=format&fit=crop" alt="Fantasy Landscape Illustration" />
+                <div class="carousel-caption">
+                  <h3>"Echoes of Eternity"</h3>
+                  <p>Digital Illustration & Concept Art</p>
+                </div>
+              </div>
+              <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1626785774573-4b799315345d?q=80&w=1200&auto=format&fit=crop" alt="Minimalist Typography Logo" />
+                <div class="carousel-caption">
+                  <h3>Nexus Brand Identity</h3>
+                  <p>Logo & Branding</p>
+                </div>
+              </div>
+              <div class="carousel-slide">
+                <img src="https://images.unsplash.com/photo-1547658719-da2b81169136?q=80&w=1200&auto=format&fit=crop" alt="Web Design" />
+                <div class="carousel-caption">
+                  <h3>Modern Web UI</h3>
+                  <p>Clean & Minimal</p>
+                </div>
+              </div>
+            </div>
+            
+          </div>
+        </div>
+      </div>
+
+      <!-- VOICE ACTING CAROUSEL -->
+      <div class="carousel-container category-carousel animate-on-scroll delay-1">
+        <div class="category-header">
+          <h2 class="section-title carousel-section-title">Voice Acting</h2>
+          <button class="btn btn-sm btn-secondary btn-pricing" data-category="Voice Acting"><i class="fa-solid fa-tags"></i> View Pricing</button>
+        </div>
+        
+        <div class="carousel-controls-wrapper">
+          <button class="carousel-btn prev-btn" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next-btn" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              <div class="carousel-slide">
+                <img src="assets/VoiceActing/70f2d42ac124cf2012762e42ef8b99f8.jpg" alt="Voice 1" />
+                <div class="carousel-caption"><h3>Narration 1</h3><p>Professional VO</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/VoiceActing/780ddd567fc8efb4cbfeb3137b9de10b.jpg" alt="Voice 2" />
+                <div class="carousel-caption"><h3>Character 1</h3><p>Emotive Acting</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/VoiceActing/be0e36c3a2b35e077ec881af57842add.jpg" alt="Voice 3" />
+                <div class="carousel-caption"><h3>Commercial</h3><p>Crisp Audio</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/VoiceActing/cef8fd40a44a57a8515158c84aca4176.jpg" alt="Voice 4" />
+                <div class="carousel-caption"><h3>Storytelling</h3><p>Narrative VO</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/VoiceActing/70f2d42ac124cf2012762e42ef8b99f8.jpg" alt="Voice 5" />
+                <div class="carousel-caption"><h3>Podcast</h3><p>Clear Speech</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/VoiceActing/780ddd567fc8efb4cbfeb3137b9de10b.jpg" alt="Voice 6" />
+                <div class="carousel-caption"><h3>Explainer</h3><p>Informative Tone</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- VIDEO EDITING CAROUSEL -->
+      <div class="carousel-container category-carousel animate-on-scroll delay-1">
+        <div class="category-header">
+          <h2 class="section-title carousel-section-title">Photo & Video Editing</h2>
+          <button class="btn btn-sm btn-secondary btn-pricing" data-category="Photo & Video Editing"><i class="fa-solid fa-tags"></i> View Pricing</button>
+        </div>
+        
+        <div class="carousel-controls-wrapper">
+          <button class="carousel-btn prev-btn" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next-btn" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              <div class="carousel-slide">
+                <img src="assets/PhotoAndVideoEditing/155576191971be9d88a6d0a4ba2c351f.jpg" alt="Video 1" />
+                <div class="carousel-caption"><h3>Cinematic</h3><p>Professional Cuts</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/PhotoAndVideoEditing/32252e7f325612a7c64bef9be7de0fef.jpg" alt="Video 2" />
+                <div class="carousel-caption"><h3>Grading</h3><p>Color Mastery</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/PhotoAndVideoEditing/73a23dd35536b892d5ac6c6ea22d8a18.jpg" alt="Video 3" />
+                <div class="carousel-caption"><h3>VFX</h3><p>Special Effects</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/PhotoAndVideoEditing/7d090fdf22b291247dfe22c45db388b7.jpg" alt="Video 4" />
+                <div class="carousel-caption"><h3>Motion</h3><p>Animated Visuals</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/PhotoAndVideoEditing/9c206003aa5fbdc1f207416b340117ac.jpg" alt="Video 5" />
+                <div class="carousel-caption"><h3>YouTube</h3><p>Content Creation</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/PhotoAndVideoEditing/ad45ccd27a15559ab2b8bb3f133319e7.jpg" alt="Video 6" />
+                <div class="carousel-caption"><h3>Shorts</h3><p>Fast Paced Edits</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAME ASSETS CAROUSEL -->
+      <div class="carousel-container category-carousel animate-on-scroll delay-1">
+        <div class="category-header">
+          <h2 class="section-title carousel-section-title">Game Assets Designing</h2>
+          <button class="btn btn-sm btn-secondary btn-pricing" data-category="Game Assets Designing"><i class="fa-solid fa-tags"></i> View Pricing</button>
+        </div>
+        
+        <div class="carousel-controls-wrapper">
+          <button class="carousel-btn prev-btn" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next-btn" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              <div class="carousel-slide">
+                <img src="assets/GameAssetsDesigning/53487783a13f25a1be1116cc5066569b.jpg" alt="Game 1" />
+                <div class="carousel-caption"><h3>Pixel Art</h3><p>Sprites & Tiles</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GameAssetsDesigning/b1e8356712fbe6e5241c1317aee6e449.jpg" alt="Game 2" />
+                <div class="carousel-caption"><h3>World</h3><p>Environments</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GameAssetsDesigning/d4d3788e8bf41c62964c81e4be6340ca.jpg" alt="Game 3" />
+                <div class="carousel-caption"><h3>Icons</h3><p>UI Elements</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GameAssetsDesigning/e6153d4ca5092f463b262901f774ce19.jpg" alt="Game 4" />
+                <div class="carousel-caption"><h3>Models</h3><p>3D Assets</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GameAssetsDesigning/e999a975b68e8ed9422cc85b99072a16.jpg" alt="Game 5" />
+                <div class="carousel-caption"><h3>Texture</h3><p>Surfacing</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- GRAPHICS DESIGNING CAROUSEL -->
+      <div class="carousel-container category-carousel animate-on-scroll delay-1">
+        <div class="category-header">
+          <h2 class="section-title carousel-section-title">Graphics Designing</h2>
+          <button class="btn btn-sm btn-secondary btn-pricing" data-category="Graphics Designing"><i class="fa-solid fa-tags"></i> View Pricing</button>
+        </div>
+        
+        <div class="carousel-controls-wrapper">
+          <button class="carousel-btn prev-btn" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next-btn" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              <div class="carousel-slide">
+                <img src="assets/GraphicsDesigning/3fc47b18f17f5774fb44dd797a39b80c.jpg" alt="Graphics 1" />
+                <div class="carousel-caption"><h3>Logos</h3><p>Branding Identity</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GraphicsDesigning/ad7afbf43cdd782e42065a21832d25d2.jpg" alt="Graphics 2" />
+                <div class="carousel-caption"><h3>Social</h3><p>Kit Design</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GraphicsDesigning/b1e914153ee272d35d72ed8f6b6b54e5.jpg" alt="Graphics 3" />
+                <div class="carousel-caption"><h3>Poster</h3><p>Advertisements</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GraphicsDesigning/da66d0da40bbd5284c9455298fb80681.jpg" alt="Graphics 4" />
+                <div class="carousel-caption"><h3>Vector</h3><p>Illustration</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GraphicsDesigning/66af5812065acbb6539762db88948624.jpg" alt="Graphics 5" />
+                <div class="carousel-caption"><h3>Flyers</h3><p>Print Ready</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/GraphicsDesigning/96716a6b8f25af9bd4a831a1ca94c1c0.jpg" alt="Graphics 6" />
+                <div class="carousel-caption"><h3>Books</h3><p>Cover Art</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- WEB DESIGNING CAROUSEL -->
+      <div class="carousel-container category-carousel animate-on-scroll delay-1">
+        <div class="category-header">
+          <h2 class="section-title carousel-section-title">Web Designing</h2>
+          <button class="btn btn-sm btn-secondary btn-pricing" data-category="Web Designing"><i class="fa-solid fa-tags"></i> View Pricing</button>
+        </div>
+        
+        <div class="carousel-controls-wrapper">
+          <button class="carousel-btn prev-btn" aria-label="Previous Slide">
+            <i class="fa-solid fa-chevron-left"></i>
+          </button>
+          <button class="carousel-btn next-btn" aria-label="Next Slide">
+            <i class="fa-solid fa-chevron-right"></i>
+          </button>
+
+          <div class="carousel-wrapper">
+            <div class="carousel-track">
+              <div class="carousel-slide">
+                <img src="assets/WebDesigning/03c6e77eebf656b76b4482e26921440a.jpg" alt="Web 1" />
+                <div class="carousel-caption"><h3>Portfolio</h3><p>Personal Sites</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/WebDesigning/1dd46bd9a85224eb75efa33de22c2228.jpg" alt="Web 2" />
+                <div class="carousel-caption"><h3>Shop</h3><p>E-commerce UX</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/WebDesigning/2dd9b368a32db9775515bb22f684ba97.jpg" alt="Web 3" />
+                <div class="carousel-caption"><h3>SaaS</h3><p>Dashboards</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/WebDesigning/ea4b0985eff8d13282b5e4eb31beed2a.jpg" alt="Web 4" />
+                <div class="carousel-caption"><h3>Landing</h3><p>LPs & Sales</p></div>
+              </div>
+              <div class="carousel-slide">
+                <img src="assets/WebDesigning/a626b01f49f30f572738e82bc0884430.jpg" alt="Web 5" />
+                <div class="carousel-caption"><h3>Blog</h3><p>Clean Layouts</p></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="dashboard-form-area">
+        <div class="form-grid dashboard-form-grid">
+        
+        <!-- COMMISSION CTA PANEL -->
+        <div class="animate-on-scroll glass-form-panel cta-panel">
+          <div class="form-header-center">
+            <h2 class="section-title form-title-center">Start a New Project</h2>
+            <p class="section-subtitle form-subtitle-center">
+              Ready to bring your next big idea to life? Click the button below to fill out a detailed commission request.
+            </p>
+            <a href="commission.html" class="btn btn-primary btn-lg cta-btn">
+              Create New Commission Request ✦
+            </a>
+          </div>
+        </div>
+        
+        <!-- HISTORY PANEL (Visual Only) -->
+        <div class="form-wrap animate-on-scroll delay-1 history-panel">
+          <h2 class="section-title history-title">Your Recent Requests</h2>
+          <div class="glass-card history-empty-card">
+            <i class="fa-solid fa-folder-open history-empty-icon"></i>
+            <p>You haven't made any requests yet.</p>
+          </div>
+        </div>
+
+      </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">✦ CommissionHub</span>
+        <p class="footer-copy">© 2026 CommissionHub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== AUTH MODAL ===================== -->
+  <div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-heading">Welcome Back</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Login Form -->
+        <div id="login-panel">
+          <div class="form-group" id="fg-login-email">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input class="form-control" type="email" id="login-email" placeholder="you@example.com" />
+            <span class="form-error">Please enter a valid email.</span>
+          </div>
+          <div class="form-group" id="fg-login-pw">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="password-wrapper">
+              <input class="form-control" type="password" id="login-password" placeholder="Your password" />
+              <button type="button" class="btn-toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-error">Please enter your password.</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-do-login">Sign In</button>
+          <div class="divider" style="margin-top:1rem">or</div>
+          <button class="social-btn" id="btn-google-login">
+            <img src="https://www.google.com/favicon.ico" width="18" height="18" alt="Google" />
+            Continue with Google
+          </button>
+          <p class="auth-switch" style="margin-top:1rem">
+            No account? <a id="go-to-signup">Create one</a>
+          </p>
+        </div>
+        <!-- Signup Form -->
+        <div id="signup-panel" style="display:none;">
+          <div class="form-group" id="fg-su-name">
+            <label class="form-label" for="su-name">Full Name</label>
+            <input class="form-control" type="text" id="su-name" placeholder="Your name" />
+            <span class="form-error">Please enter your name.</span>
+          </div>
+          <div class="form-group" id="fg-su-email">
+            <label class="form-label" for="su-email">Email Address</label>
+            <input class="form-control" type="email" id="su-email" placeholder="you@example.com" />
+            <span class="form-error">Please enter a valid email.</span>
+          </div>
+          <div class="form-group" id="fg-su-pw">
+            <label class="form-label" for="su-password">Password</label>
+            <div class="password-wrapper">
+              <input class="form-control" type="password" id="su-password" placeholder="Create a password" />
+              <button type="button" class="btn-toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-error">Password must be at least 6 characters.</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-do-signup">Create Account</button>
+          <div class="divider" style="margin-top:1rem">or</div>
+          <button class="social-btn" id="btn-google-signup">
+            <img src="https://www.google.com/favicon.ico" width="18" height="18" alt="Google" />
+            Sign up with Google
+          </button>
+          <p class="auth-switch" style="margin-top:1rem">
+            Already have an account? <a id="go-to-login">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== PRICING MODAL ===================== -->
+  <div class="modal-overlay" id="pricing-modal" role="dialog" aria-modal="true" aria-labelledby="pricing-modal-heading">
+    <div class="modal pricing-modal-wrap">
+      <div class="modal-header">
+        <h3 id="pricing-modal-heading">Pricing & Features</h3>
+        <button class="modal-close" id="pricing-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="pricing-grid" id="pricing-grid">
+          <!-- Dynamically populated -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <a href="commission.html" class="btn btn-primary btn-full" id="pricing-cta-btn">Start a Request</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <span class="lightbox-close">&times;</span>
+    <img class="lightbox-content" id="lightbox-img" src="" alt="Expanded View" />
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+  </div>
+
+  <script src="js/script.js"></script>
+  <script src="js/dashboard.js"></script>
+</body>
+</html>

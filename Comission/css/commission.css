@@ -1,0 +1,128 @@
+/* =========================================
+   COMMISSION PAGE SPECIFIC STYLES
+   ========================================= */
+
+.commission-section {
+  padding-top: calc(var(--nav-height) + 4rem) !important;
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+.commission-container {
+  position: relative;
+  z-index: 1;
+}
+
+.commission-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(80px);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.orb-primary {
+  width: 500px;
+  height: 500px;
+  background: var(--accent);
+  top: -100px;
+  right: -100px;
+  opacity: 0.15;
+}
+
+.orb-secondary {
+  width: 400px;
+  height: 400px;
+  background: #db8af5;
+  bottom: -60px;
+  left: -80px;
+  opacity: 0.12;
+}
+
+.back-nav {
+  margin-bottom: 2rem;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1.2rem;
+  background: var(--accent);
+  color: #fff !important;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: all var(--transition);
+  box-shadow: 0 4px 12px var(--accent-glow);
+}
+
+.btn-back:hover {
+  transform: translateX(-4px);
+  background: var(--accent-dark);
+  box-shadow: 0 6px 16px var(--accent-glow);
+}
+
+.commission-form-area {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.glass-form-panel {
+  padding: 3.5rem !important;
+  border-radius: 28px !important;
+  background: var(--bg-card) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--border) !important;
+  box-shadow: var(--shadow-lg) !important;
+}
+
+.form-header-center {
+  text-align: center;
+  margin-bottom: 2.5rem;
+}
+
+.form-title-center {
+  font-size: clamp(2.2rem, 5vw, 3rem) !important;
+  margin-bottom: 0.75rem !important;
+}
+
+.form-subtitle-center {
+  margin-bottom: 0 !important;
+  max-width: 100% !important;
+}
+
+.commission-inner-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .commission-inner-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.commission-inner-form-grid .form-group.full {
+  grid-column: 1 / -1;
+}
+
+.form-input-dark {
+  background-color: var(--bg-glass) !important;
+  accent-color: var(--accent);
+  color-scheme: dark;
+}
+
+.form-input-dark:focus {
+  background-color: var(--bg-secondary) !important;
+  border-color: var(--accent) !important;
+}
+
+.form-submit-btn {
+  margin-top: 1.5rem !important;
+  height: 56px;
+  font-size: 1.1rem !important;
+}

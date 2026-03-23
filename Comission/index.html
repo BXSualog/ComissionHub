@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CommissionHub – Creative Services on Demand</title>
+  <meta name="description" content="Get high-quality creative commissions tailored to your vision. Illustrations, music, writing, and more." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen">
+    <div class="loader-logo">CommissionHub</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST CONTAINER ===================== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">✦ CommissionHub</a>
+
+      <ul class="nav-links">
+      </ul>
+
+      <div class="nav-actions">
+        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i> <span>Dark Mode</span></button>
+        <button class="btn btn-secondary" id="btn-login">Sign In</button>
+        <button class="btn btn-primary" id="btn-signup">Get Started</button>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" id="mobile-login">Sign In</a>
+  </div>
+
+  <!-- ===================== HERO SECTION ===================== -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+    </div>
+    <div class="container">
+      <div class="hero-content">
+        <div class="hero-tag">
+          <span></span>
+          Open for Commissions
+        </div>
+        <h1 class="hero-title">
+          Bring Your Vision<br/>
+          <span class="gradient-text">to Life</span>
+        </h1>
+        <p class="hero-desc">
+          From stunning illustrations to immersive soundscapes — get premium creative work tailored to your exact needs, delivered on time.
+        </p>
+        <div class="hero-actions">
+          <a href="#" id="btn-go-dashboard" class="btn btn-primary">Go to Dashboard ↗</a>
+          <a href="#services" class="btn btn-secondary">View Services</a>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICES SECTION ===================== -->
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title animate-on-scroll">What I Offer</h2>
+      <p class="section-subtitle animate-on-scroll delay-1">
+        A curated range of creative services crafted with passion and precision.
+      </p>
+      <div class="services-grid">
+
+        <div class="service-card animate-on-scroll delay-1">
+          <div class="service-icon"><i class="fa-solid fa-palette"></i></div>
+          <h3 class="service-title">Graphics Designing</h3>
+          <p class="service-desc">Eye-catching posters, social media graphics, banners, and visual content tailored to your brand.</p>
+          <span class="service-price">Starting at ₱1,000</span>
+        </div>
+
+        <div class="service-card animate-on-scroll delay-2">
+          <div class="service-icon"><i class="fa-solid fa-globe"></i></div>
+          <h3 class="service-title">Web Designing</h3>
+          <p class="service-desc">Modern, responsive website designs including landing pages, portfolios, and full UI mockups.</p>
+          <span class="service-price">Starting at ₱4,000</span>
+        </div>
+
+        <div class="service-card animate-on-scroll delay-3">
+          <div class="service-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+          <h3 class="service-title">Voice Acting</h3>
+          <p class="service-desc">Professional voice-over work for games, animations, videos, and character narration.</p>
+          <span class="service-price">Starting at ₱1,500</span>
+        </div>
+
+        <div class="service-card animate-on-scroll delay-4">
+          <div class="service-icon"><i class="fa-solid fa-clapperboard"></i></div>
+          <h3 class="service-title">Photo & Video Editing</h3>
+          <p class="service-desc">High-quality photo retouching, color grading, video cuts, and cinematic post-production edits.</p>
+          <span class="service-price">Starting at ₱1,250</span>
+        </div>
+
+        <div class="service-card animate-on-scroll delay-1">
+          <div class="service-icon"><i class="fa-solid fa-gamepad"></i></div>
+          <h3 class="service-title">Game Assets Designing</h3>
+          <p class="service-desc">Custom sprites, tilesets, UI elements, icons, and complete visual asset packs for your game.</p>
+          <span class="service-price">Starting at ₱1,750</span>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMMISSION FORM MOVED TO DASHBOARD ===================== -->
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">✦ CommissionHub</span>
+        <p class="footer-copy">© 2026 CommissionHub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== AUTH MODAL ===================== -->
+  <div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-heading">Welcome Back</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Login Form -->
+        <div id="login-panel">
+          <div class="form-group" id="fg-login-email">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input class="form-control" type="email" id="login-email" placeholder="you@example.com" />
+            <span class="form-error">Please enter a valid email.</span>
+          </div>
+          <div class="form-group" id="fg-login-pw">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="password-wrapper">
+              <input class="form-control" type="password" id="login-password" placeholder="Your password" />
+              <button type="button" class="btn-toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-error">Please enter your password.</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-do-login">Sign In</button>
+          <div class="divider" style="margin-top:1rem">or</div>
+          <button class="social-btn" id="btn-google-login">
+            <img src="https://www.google.com/favicon.ico" width="18" height="18" alt="Google" />
+            Continue with Google
+          </button>
+          <p class="auth-switch" style="margin-top:1rem">
+            No account? <a id="go-to-signup">Create one</a>
+          </p>
+        </div>
+        <!-- Signup Form -->
+        <div id="signup-panel" style="display:none;">
+          <div class="form-group" id="fg-su-name">
+            <label class="form-label" for="su-name">Full Name</label>
+            <input class="form-control" type="text" id="su-name" placeholder="Your name" />
+            <span class="form-error">Please enter your name.</span>
+          </div>
+          <div class="form-group" id="fg-su-email">
+            <label class="form-label" for="su-email">Email Address</label>
+            <input class="form-control" type="email" id="su-email" placeholder="you@example.com" />
+            <span class="form-error">Please enter a valid email.</span>
+          </div>
+          <div class="form-group" id="fg-su-pw">
+            <label class="form-label" for="su-password">Password</label>
+            <div class="password-wrapper">
+              <input class="form-control" type="password" id="su-password" placeholder="Create a password" />
+              <button type="button" class="btn-toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-error">Password must be at least 6 characters.</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-do-signup">Create Account</button>
+          <div class="divider" style="margin-top:1rem">or</div>
+          <button class="social-btn" id="btn-google-signup">
+            <img src="https://www.google.com/favicon.ico" width="18" height="18" alt="Google" />
+            Sign up with Google
+          </button>
+          <p class="auth-switch" style="margin-top:1rem">
+            Already have an account? <a id="go-to-login">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
