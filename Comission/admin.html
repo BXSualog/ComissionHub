@@ -77,13 +77,9 @@
             <span class="nav-icon">📋</span>
             <span>All Requests</span>
           </div>
-          <div class="sidebar-nav-item" id="nav-pending">
-            <span class="nav-icon">🕐</span>
-            <span>Pending</span>
-          </div>
-          <div class="sidebar-nav-item" id="nav-completed">
-            <span class="nav-icon">✅</span>
-            <span>Completed</span>
+          <div class="sidebar-nav-item" id="nav-commissioners">
+            <span class="nav-icon">👥</span>
+            <span>Commissioners</span>
           </div>
         </nav>
         <div class="sidebar-footer">
@@ -100,7 +96,7 @@
             <h1 class="topbar-title" id="topbar-title">All Requests</h1>
           </div>
           <div class="topbar-right">
-            <button class="theme-toggle" id="adm-theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i> <span>Dark Mode</span></button>
+
             <span id="adm-user-badge" class="adm-user-badge">Logged in as <strong style="color:var(--accent);">admin</strong></span>
           </div>
         </div>
@@ -109,7 +105,7 @@
         <div class="admin-content">
 
           <!-- STAT CARDS -->
-          <div class="stats-row">
+          <div class="stats-row" id="admin-stats-row">
             <div class="stat-card">
               <span class="stat-card-label">Total Requests</span>
               <span class="stat-card-value" id="stat-total">0</span>
@@ -133,7 +129,7 @@
           </div>
 
           <!-- REQUESTS TABLE PANEL -->
-          <div class="requests-panel">
+          <div class="requests-panel" id="requests-panel">
             <div class="requests-toolbar">
               <span class="toolbar-title">Commission Requests</span>
               <div class="toolbar-right">
@@ -141,6 +137,11 @@
                   <span>🔍</span>
                   <input type="text" id="search-input" placeholder="Search by name, email..." aria-label="Search requests" />
                 </div>
+                <select class="filter-select" id="status-filter" aria-label="Filter by status">
+                  <option value="all">All Status</option>
+                  <option value="pending">Pending</option>
+                  <option value="completed">Completed</option>
+                </select>
                 <select class="filter-select" id="service-filter" aria-label="Filter by service">
                   <option value="all">All Services</option>
                   <option value="Graphics Designing">Graphics Designing</option>
@@ -165,8 +166,44 @@
                 <tbody id="requests-tbody"></tbody>
               </table>
             </div>
-            <div id="pagination-container" class="pagination-container"></div>
           </div>
+
+          <!-- COMMISSIONERS PANEL (New) -->
+          <div class="requests-panel" id="commissioners-panel" style="display:none;">
+            <div class="requests-toolbar">
+              <span class="toolbar-title">Registered Commissioners</span>
+              <div class="toolbar-right">
+                <div class="search-box">
+                  <span>🔍</span>
+                  <input type="text" id="comm-search-input" placeholder="Search by name, email..." aria-label="Search commissioners" />
+                </div>
+                <select class="filter-select" id="comm-service-filter" aria-label="Filter by service">
+                  <option value="all">All Services</option>
+                  <option value="Graphics Designing">Graphics Designing</option>
+                  <option value="Web Designing">Web Designing</option>
+                  <option value="Voice Acting">Voice Acting</option>
+                  <option value="Photo & Video Editing">Photo &amp; Video Editing</option>
+                  <option value="Game Assets Designing">Game Assets Designing</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Services</th>
+                    <th>Joined Date</th>
+                  </tr>
+                </thead>
+                <tbody id="commissioners-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+
+          <div id="pagination-container" class="pagination-container"></div>
 
         </div><!-- /admin-content -->
       </main>

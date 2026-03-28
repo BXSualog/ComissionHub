@@ -74,25 +74,16 @@ function clearSession() {
    THEME SYSTEM
    =========================== */
 function getTheme() {
-  const saved = localStorage.getItem('commissionhub_theme');
-  if (saved) return saved;
-  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  return 'dark';
 }
 
 function applyTheme(theme) {
-  document.documentElement.setAttribute('data-theme', theme);
-  const toggles = $$('.theme-toggle, #adm-theme-toggle');
-  toggles.forEach(btn => {
-    btn.innerHTML = theme === 'dark' 
-      ? '<i class="fa-solid fa-sun"></i> <span>Light Mode</span>' 
-      : '<i class="fa-solid fa-moon"></i> <span>Dark Mode</span>';
-  });
-  localStorage.setItem('commissionhub_theme', theme);
+  document.documentElement.setAttribute('data-theme', 'dark');
+  localStorage.setItem('commissionhub_theme', 'dark');
 }
 
 function toggleTheme() {
-  const current = document.documentElement.getAttribute('data-theme');
-  applyTheme(current === 'dark' ? 'light' : 'dark');
+  // Theme toggling is disabled.
 }
 
 /* ===========================
@@ -192,6 +183,9 @@ function initClientPage() {
   /* --- Theme toggle --- */
   const themeBtn = $('#theme-toggle');
   if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
+
+  const sidebarThemeBtn = $('#sidebar-theme-toggle');
+  if (sidebarThemeBtn) sidebarThemeBtn.addEventListener('click', toggleTheme);
 
   /* --- Auth Modal --- */
   const authModal    = $('#auth-modal');
@@ -417,30 +411,87 @@ function initAdminPage() {
     showToast('Signed out successfully.', 'info');
   });
 
-  /* --- Sidebar Navigation --- */
-  const navItems = {
-    'nav-requests':  { filter: 'all',       title: 'All Requests' },
-    'nav-pending':   { filter: 'pending',   title: 'Pending Requests' },
-    'nav-completed': { filter: 'completed', title: 'Completed Requests' },
-  };
+  let activeView    = 'requests'; // 'requests' | 'commissioners'
+  let commSearchQuery = '';
+  let commServiceFilter = 'all';
 
-  Object.entries(navItems).forEach(([id, cfg]) => {
-    $(`#${id}`)?.addEventListener('click', () => {
-      $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-      $(`#${id}`)?.classList.add('active');
-      currentFilter = cfg.filter;
-      const tt = $('#topbar-title');
-      if (tt) tt.textContent = cfg.title;
-      currentPage = 1;
-      renderTable();
-    });
+  /* --- Sidebar Navigation --- */
+  $('#nav-requests')?.addEventListener('click', () => {
+    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+    $('#nav-requests')?.classList.add('active');
+    
+    activeView = 'requests';
+    currentFilter = 'all';
+    serviceFilter = 'all';
+    searchQuery = '';
+    
+    // UI switching
+    $('#requests-panel').style.display = 'block';
+    $('#commissioners-panel').style.display = 'none';
+    $('#admin-stats-row').style.display = 'grid';
+
+    // Reset dropdowns
+    const sf = $('#service-filter');
+    const stf = $('#status-filter');
+    const si = $('#search-input');
+    if (sf) sf.value = 'all';
+    if (stf) stf.value = 'all';
+    if (si) si.value = '';
+
+    const tt = $('#topbar-title');
+    if (tt) tt.textContent = 'All Requests';
+    currentPage = 1;
+    renderTable();
+  });
+
+  $('#nav-commissioners')?.addEventListener('click', () => {
+    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+    $('#nav-commissioners')?.classList.add('active');
+    
+    activeView = 'commissioners';
+    commSearchQuery = '';
+    commServiceFilter = 'all';
+    
+    // UI switching
+    $('#requests-panel').style.display = 'none';
+    $('#commissioners-panel').style.display = 'block';
+    $('#admin-stats-row').style.display = 'none'; // Hide stats for users view
+
+    // Reset dropdowns
+    const csi = $('#comm-search-input');
+    const csf = $('#comm-service-filter');
+    if (csi) csi.value = '';
+    if (csf) csf.value = 'all';
+
+    const tt = $('#topbar-title');
+    if (tt) tt.textContent = 'Registered Commissioners';
+    currentPage = 1;
+    renderCommissioners();
   });
 
   /* --- Search & Filters --- */
+  $('#status-filter')?.addEventListener('change', e => {
+    currentFilter = e.target.value;
+    currentPage = 1;
+    renderTable();
+  });
+
   $('#search-input')?.addEventListener('input', e => {
     searchQuery = e.target.value.toLowerCase();
     currentPage = 1;
     renderTable();
+  });
+
+  $('#comm-search-input')?.addEventListener('input', e => {
+    commSearchQuery = e.target.value.toLowerCase();
+    currentPage = 1;
+    renderCommissioners();
+  });
+
+  $('#comm-service-filter')?.addEventListener('change', e => {
+    commServiceFilter = e.target.value;
+    currentPage = 1;
+    renderCommissioners();
   });
 
   $('#service-filter')?.addEventListener('change', e => {
@@ -604,6 +655,83 @@ function initAdminPage() {
     });
   }
 
+  /* ===========================
+     RENDER COMMISSIONERS
+     =========================== */
+  function renderCommissioners() {
+    const tbody = $('#commissioners-tbody');
+    if (!tbody) return;
+
+    let users = getUsers();
+
+    // Only show commissioners (users with services)
+    users = users.filter(u => (u.services && u.services.length > 0) || u.service);
+
+    const filterVal = typeof commServiceFilter !== 'undefined' ? commServiceFilter : 'all';
+    if (filterVal !== 'all') {
+      users = users.filter(u => {
+        if (u.services && Array.isArray(u.services)) {
+          return u.services.includes(filterVal);
+        } else if (u.service) {
+          return u.service === filterVal;
+        }
+        return false;
+      });
+    }
+
+    // Search filter
+    if (commSearchQuery) {
+      users = users.filter(u =>
+        u.name.toLowerCase().includes(commSearchQuery) ||
+        u.email.toLowerCase().includes(commSearchQuery)
+      );
+    }
+
+    const totalItems = users.length;
+
+    if (totalItems === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="3">
+            <div class="empty-state">
+              <div class="empty-icon">👥</div>
+              <div>No commissioners found</div>
+            </div>
+          </td>
+        </tr>`;
+      renderPagination(0);
+      return;
+    }
+
+    // Slice for pagination
+    const start = (currentPage - 1) * itemsPerPage;
+    const end   = start + itemsPerPage;
+    const paginatedItems = users.slice(start, end);
+
+    tbody.innerHTML = paginatedItems.map(u => {
+      // Format services as tags
+      let servicesHtml = '<span class="badge" style="background:var(--bg-glass);color:var(--text-muted)">Client</span>';
+      
+      if (u.services && Array.isArray(u.services) && u.services.length > 0) {
+        servicesHtml = u.services.map(s => `<span class="badge" style="background:var(--accent-glow);color:var(--accent);margin-right:0.25rem;margin-bottom:0.25rem;">${escapeHtml(s)}</span>`).join('');
+      } else if (u.service) {
+         // Fallback if they only have a single service string from older logic
+         servicesHtml = `<span class="badge" style="background:var(--accent-glow);color:var(--accent);">${escapeHtml(u.service)}</span>`;
+      }
+
+      return `
+      <tr>
+        <td data-label="Name"><div class="td-name">${escapeHtml(u.name)}</div></td>
+        <td data-label="Email">${escapeHtml(u.email)}</td>
+        <td data-label="Services">${servicesHtml}</td>
+        <td data-label="Joined Date">${u.created ? formatDate(u.created) : '—'}</td>
+      </tr>
+      `;
+    }).join('');
+
+    renderPagination(totalItems);
+  }
+
   /* --- Pagination Logic --- */
   function renderPagination(totalItems) {
     const container = $('#pagination-container');
@@ -648,8 +776,10 @@ function initAdminPage() {
         const page = parseInt(btn.dataset.page);
         if (!isNaN(page) && page !== currentPage) {
           currentPage = page;
-          renderTable();
-          // Scroll to top of table
+          if (activeView === 'requests') renderTable();
+          else renderCommissioners();
+          
+          // Scroll to top of content
           $('.admin-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
@@ -738,10 +868,57 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  /* --- Sidebar Modals (Recent Requests & Notifications) --- */
+  function initSidebarModals() {
+    const rrModal = $('#recent-requests-modal');
+    const rrOpenBtn = $('#btn-recent-requests');
+    const rrCloseBtn = $('#rr-modal-close');
+
+    const notifModal = $('#notifications-modal');
+    const notifOpenBtn = $('#btn-notifications');
+    const notifCloseBtn = $('#notif-modal-close');
+
+    if (!rrModal && !notifModal) return;
+
+    const openM = (modal) => {
+      if (!modal) return;
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    };
+
+    const closeM = (modal) => {
+      if (!modal) return;
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    };
+
+    rrOpenBtn?.addEventListener('click', () => openM(rrModal));
+    rrCloseBtn?.addEventListener('click', () => closeM(rrModal));
+    rrModal?.addEventListener('click', (e) => { if (e.target === rrModal) closeM(rrModal); });
+
+    notifOpenBtn?.addEventListener('click', () => openM(notifModal));
+    notifCloseBtn?.addEventListener('click', () => closeM(notifModal));
+    notifModal?.addEventListener('click', (e) => { if (e.target === notifModal) closeM(notifModal); });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        closeM(rrModal);
+        closeM(notifModal);
+      }
+    });
+  }
+
   const path = window.location.pathname;
   if (path.includes('admin')) {
     initAdminPage();
   } else {
     initClientPage();
+    initSidebarModals();
+    
+    // Sidebar Logout
+    $('#btn-sidebar-logout')?.addEventListener('click', () => {
+      clearSession();
+      window.location.href = 'index.html';
+    });
   }
 });

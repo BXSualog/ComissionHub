@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/commission.css" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 </head>
-<body>
+<body class="has-sidebar">
 
   <!-- ===================== LOADING SCREEN ===================== -->
   <div id="loading-screen">
@@ -31,8 +31,6 @@
       </ul>
 
       <div class="nav-actions">
-        <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme"><i class="fa-solid fa-moon"></i> <span>Dark Mode</span></button>
-        <button class="btn btn-secondary" id="btn-logout" style="display:none;">Sign Out</button>
         <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
           <span></span><span></span><span></span>
         </button>
@@ -40,9 +38,47 @@
     </div>
   </nav>
 
+  <!-- ===================== SIDEBAR ===================== -->
+  <div id="sidebar" class="discord-sidebar">
+    <div class="sidebar-tooltip-wrap">
+      <a href="index.html" class="discord-logo-btn" aria-label="CommissionHub Home">
+        <img src="assets/logo-icon.png" alt="CommissionHub Logo" class="discord-logo" />
+      </a>
+      <span class="sidebar-tooltip">Home</span>
+    </div>
+    <div class="discord-separator"></div>
+    <div class="sidebar-tooltip-wrap">
+      <a href="commission.html" class="discord-add-btn active" aria-label="Add Request">
+        <i class="fa-solid fa-plus"></i>
+      </a>
+      <span class="sidebar-tooltip">Add Request</span>
+    </div>
+    <div class="sidebar-tooltip-wrap">
+      <button class="discord-add-btn" id="btn-recent-requests" aria-label="Recent Requests">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+      </button>
+      <span class="sidebar-tooltip">Recent Requests</span>
+    </div>
+    <div class="sidebar-tooltip-wrap">
+      <button class="discord-add-btn" id="btn-notifications" aria-label="Notifications">
+        <i class="fa-solid fa-bell"></i>
+      </button>
+      <span class="sidebar-tooltip">Notifications</span>
+    </div>
+
+    <div class="sidebar-footer">
+
+      <div class="sidebar-tooltip-wrap">
+        <button class="discord-logout-btn" id="btn-sidebar-logout" aria-label="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+        <span class="sidebar-tooltip">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
   <!-- Mobile Menu -->
   <div class="mobile-menu" id="mobile-menu">
-    <a href="#" id="mobile-logout" style="display:none;">Sign Out</a>
   </div>
 
   <!-- ===================== COMMISSION PAGE CONTENT ===================== -->
@@ -113,6 +149,22 @@
                 <textarea class="form-control form-input-dark" id="req-details" name="details" placeholder="Describe your project in as much detail as possible — style, references, deadline, any special requirements..." rows="6"></textarea>
                 <span class="form-error">Please describe your project (min. 20 characters).</span>
               </div>
+              
+              <div class="form-group full" id="fg-upload">
+                <div class="file-upload-container">
+                  <div class="file-upload-area" id="drop-area">
+                    <div class="file-upload-message">
+                      <i class="fas fa-cloud-upload-alt"></i>
+                      <h3>Drag & Drop Files Here</h3>
+                      <p>or</p>
+                      <label for="fileUpload" class="file-upload-btn">Browse Files</label>
+                      <input type="file" id="fileUpload" multiple hidden>
+                      <p class="file-upload-info">Supports: JPG, PNG, PDF, DOC, MP4 (Max: 10MB) <span class="badge"><i class="fas fa-plus-circle"></i> Fonts</span></p>
+                    </div>
+                    <div class="file-upload-preview" id="previewArea"></div>
+                  </div>
+                </div>
+              </div>
             </div>
             <button type="submit" class="btn btn-primary btn-full form-submit-btn" id="submit-btn">
               Send Commission Request ✦
@@ -134,6 +186,39 @@
   </footer>
 
   <!-- Re-using script.js for core things, and commission.js for form logic -->
+  <!-- ===================== RECENT REQUESTS MODAL ===================== -->
+  <div class="modal-overlay" id="recent-requests-modal" role="dialog" aria-modal="true" aria-labelledby="rr-modal-heading">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="rr-modal-heading"><i class="fa-solid fa-clock-rotate-left" style="margin-right:.5rem;color:var(--accent)"></i>Recent Requests</h3>
+        <button class="modal-close" id="rr-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="rr-empty-state">
+          <i class="fa-solid fa-folder-open rr-empty-icon"></i>
+          <p>You haven't made any requests yet.</p>
+          <a href="commission.html" class="btn btn-primary" style="margin-top:1rem">Create your first request ✦</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== NOTIFICATIONS MODAL ===================== -->
+  <div class="modal-overlay" id="notifications-modal" role="dialog" aria-modal="true" aria-labelledby="notif-modal-heading">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="notif-modal-heading"><i class="fa-solid fa-bell" style="margin-right:.5rem;color:var(--accent)"></i>Notifications</h3>
+        <button class="modal-close" id="notif-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="rr-empty-state">
+          <i class="fa-solid fa-bell-slash rr-empty-icon" style="opacity: 0.5;"></i>
+          <p>You have no new notifications.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <script src="js/script.js"></script>
   <script src="js/commission.js"></script>
 </body>

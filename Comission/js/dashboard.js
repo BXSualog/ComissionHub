@@ -32,25 +32,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Setup Logout
-    const btnLogout = $('#btn-logout');
-    if (btnLogout) {
-        btnLogout.style.display = 'inline-flex';
-        btnLogout.addEventListener('click', () => {
-            clearSession();
-            window.location.href = 'index.html';
-        });
-    }
-
-    const mobileLogout = $('#mobile-logout');
-    if (mobileLogout) {
-        mobileLogout.style.display = 'block';
-        mobileLogout.addEventListener('click', (e) => {
-            e.preventDefault();
-            clearSession();
-            window.location.href = 'index.html';
-        });
-    }
 
     /* --- Custom Smooth Scroll Animation --- */
     function animateScroll(element, target, duration = 600) {
@@ -234,10 +215,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === pricingModal) closePricingModal();
         });
     }
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') closePricingModal();
-    });
 
     initCarousels();
     initLightbox();
