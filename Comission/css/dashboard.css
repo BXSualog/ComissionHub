@@ -185,10 +185,10 @@
 }
 
 .carousel-slide {
-  flex: 0 0 33.333% !important;
-  width: 33.333% !important;
-  min-width: 33.333% !important;
-  padding: 0 10px;
+  flex: 0 0 40% !important;
+  width: 40% !important;
+  min-width: 40% !important;
+  padding: 0 15px;
   box-sizing: border-box;
   position: relative;
   scroll-snap-align: start;
@@ -307,16 +307,7 @@
   position: relative;
 }
 
-.carousel-section-title {
-  font-size: 1.75rem;
-  font-weight: 800;
-  margin-bottom: 2.5rem;
-  text-align: left;
-  position: relative;
-  padding-left: 1.2rem;
-  color: var(--text-primary);
-  letter-spacing: -0.01em;
-}
+/* Redundant styling removed - now handled by global style.css */
 
 .carousel-section-title::before {
   content: '';

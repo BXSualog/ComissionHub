@@ -1,4 +1,4 @@
-﻿/* =========================================
+/* =========================================
    COMMISSION PLATFORM - MASTER STYLESHEET
    ========================================= */
 
@@ -1444,6 +1444,38 @@ footer {
   50%  { background-position: 100% 50%; }
   100% { background-position: 0% 50%; }
 }
+/* ===========================
+   SHARED SECTION TITLES
+   =========================== */
+.carousel-section-title {
+  font-size: 1.85rem !important;
+  font-weight: 800 !important;
+  margin: 0 0 2.5rem !important;
+  text-align: left !important;
+  position: relative !important;
+  padding-left: 1.2rem !important;
+  color: var(--text-primary) !important;
+  letter-spacing: -0.01em !important;
+}
+
+.carousel-section-title::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 55%; /* Visual centering adjustment */
+  transform: translateY(-50%);
+  width: 5px;
+  height: 32px;
+  background: var(--gradient-accent);
+  border-radius: var(--radius-full);
+  box-shadow: 0 0 15px var(--accent-glow);
+  animation: barPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes barPulse {
+  0%, 100% { box-shadow: 0 0 10px var(--accent-glow); }
+  50%       { box-shadow: 0 0 24px var(--accent-glow); }
+}
 
 .gradient-text {
   background: linear-gradient(270deg, #7c6af7, #db8af5, #a78bf8, #c58af5, #7c6af7);
@@ -1457,7 +1489,10 @@ footer {
 /* --- Section title underline reveal --- */
 .section-title {
   position: relative;
-  display: inline-block;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .section-title.visible::after {

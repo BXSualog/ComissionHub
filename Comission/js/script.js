@@ -411,62 +411,24 @@ function initAdminPage() {
     showToast('Signed out successfully.', 'info');
   });
 
-  let activeView    = 'requests'; // 'requests' | 'commissioners'
-  let commSearchQuery = '';
-  let commServiceFilter = 'all';
+
 
   /* --- Sidebar Navigation --- */
   $('#nav-requests')?.addEventListener('click', () => {
     $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
     $('#nav-requests')?.classList.add('active');
     
-    activeView = 'requests';
     currentFilter = 'all';
     serviceFilter = 'all';
     searchQuery = '';
     
-    // UI switching
-    $('#requests-panel').style.display = 'block';
-    $('#commissioners-panel').style.display = 'none';
-    $('#admin-stats-row').style.display = 'grid';
-
     // Reset dropdowns
-    const sf = $('#service-filter');
-    const stf = $('#status-filter');
-    const si = $('#search-input');
-    if (sf) sf.value = 'all';
-    if (stf) stf.value = 'all';
-    if (si) si.value = '';
+    if ($('#service-filter')) $('#service-filter').value = 'all';
+    if ($('#status-filter')) $('#status-filter').value = 'all';
+    if ($('#search-input')) $('#search-input').value = '';
 
-    const tt = $('#topbar-title');
-    if (tt) tt.textContent = 'All Requests';
     currentPage = 1;
     renderTable();
-  });
-
-  $('#nav-commissioners')?.addEventListener('click', () => {
-    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-    $('#nav-commissioners')?.classList.add('active');
-    
-    activeView = 'commissioners';
-    commSearchQuery = '';
-    commServiceFilter = 'all';
-    
-    // UI switching
-    $('#requests-panel').style.display = 'none';
-    $('#commissioners-panel').style.display = 'block';
-    $('#admin-stats-row').style.display = 'none'; // Hide stats for users view
-
-    // Reset dropdowns
-    const csi = $('#comm-search-input');
-    const csf = $('#comm-service-filter');
-    if (csi) csi.value = '';
-    if (csf) csf.value = 'all';
-
-    const tt = $('#topbar-title');
-    if (tt) tt.textContent = 'Registered Commissioners';
-    currentPage = 1;
-    renderCommissioners();
   });
 
   /* --- Search & Filters --- */
@@ -482,17 +444,7 @@ function initAdminPage() {
     renderTable();
   });
 
-  $('#comm-search-input')?.addEventListener('input', e => {
-    commSearchQuery = e.target.value.toLowerCase();
-    currentPage = 1;
-    renderCommissioners();
-  });
 
-  $('#comm-service-filter')?.addEventListener('change', e => {
-    commServiceFilter = e.target.value;
-    currentPage = 1;
-    renderCommissioners();
-  });
 
   $('#service-filter')?.addEventListener('change', e => {
     serviceFilter = e.target.value;
@@ -655,82 +607,7 @@ function initAdminPage() {
     });
   }
 
-  /* ===========================
-     RENDER COMMISSIONERS
-     =========================== */
-  function renderCommissioners() {
-    const tbody = $('#commissioners-tbody');
-    if (!tbody) return;
 
-    let users = getUsers();
-
-    // Only show commissioners (users with services)
-    users = users.filter(u => (u.services && u.services.length > 0) || u.service);
-
-    const filterVal = typeof commServiceFilter !== 'undefined' ? commServiceFilter : 'all';
-    if (filterVal !== 'all') {
-      users = users.filter(u => {
-        if (u.services && Array.isArray(u.services)) {
-          return u.services.includes(filterVal);
-        } else if (u.service) {
-          return u.service === filterVal;
-        }
-        return false;
-      });
-    }
-
-    // Search filter
-    if (commSearchQuery) {
-      users = users.filter(u =>
-        u.name.toLowerCase().includes(commSearchQuery) ||
-        u.email.toLowerCase().includes(commSearchQuery)
-      );
-    }
-
-    const totalItems = users.length;
-
-    if (totalItems === 0) {
-      tbody.innerHTML = `
-        <tr>
-          <td colspan="3">
-            <div class="empty-state">
-              <div class="empty-icon">👥</div>
-              <div>No commissioners found</div>
-            </div>
-          </td>
-        </tr>`;
-      renderPagination(0);
-      return;
-    }
-
-    // Slice for pagination
-    const start = (currentPage - 1) * itemsPerPage;
-    const end   = start + itemsPerPage;
-    const paginatedItems = users.slice(start, end);
-
-    tbody.innerHTML = paginatedItems.map(u => {
-      // Format services as tags
-      let servicesHtml = '<span class="badge" style="background:var(--bg-glass);color:var(--text-muted)">Client</span>';
-      
-      if (u.services && Array.isArray(u.services) && u.services.length > 0) {
-        servicesHtml = u.services.map(s => `<span class="badge" style="background:var(--accent-glow);color:var(--accent);margin-right:0.25rem;margin-bottom:0.25rem;">${escapeHtml(s)}</span>`).join('');
-      } else if (u.service) {
-         // Fallback if they only have a single service string from older logic
-         servicesHtml = `<span class="badge" style="background:var(--accent-glow);color:var(--accent);">${escapeHtml(u.service)}</span>`;
-      }
-
-      return `
-      <tr>
-        <td data-label="Name"><div class="td-name">${escapeHtml(u.name)}</div></td>
-        <td data-label="Email">${escapeHtml(u.email)}</td>
-        <td data-label="Services">${servicesHtml}</td>
-        <td data-label="Joined Date">${u.created ? formatDate(u.created) : '—'}</td>
-      </tr>
-      `;
-    }).join('');
-
-    renderPagination(totalItems);
-  }
 
   /* --- Pagination Logic --- */
   function renderPagination(totalItems) {
@@ -776,8 +653,7 @@ function initAdminPage() {
         const page = parseInt(btn.dataset.page);
         if (!isNaN(page) && page !== currentPage) {
           currentPage = page;
-          if (activeView === 'requests') renderTable();
-          else renderCommissioners();
+          renderTable();
           
           // Scroll to top of content
           $('.admin-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -914,6 +790,7 @@ document.addEventListener('DOMContentLoaded', () => {
   } else {
     initClientPage();
     initSidebarModals();
+    initServicesCarousel(); // Initialize the new carousel
     
     // Sidebar Logout
     $('#btn-sidebar-logout')?.addEventListener('click', () => {
@@ -922,3 +799,122 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 });
+
+/* ===========================
+   SERVICES CAROUSEL LOGIC
+   =========================== */
+function initServicesCarousel() {
+  const track = $('#services-track');
+  const wrapper = $('.services-carousel-wrapper');
+  if (!track || !wrapper) return;
+
+  const originalCards = Array.from(track.children);
+  if (originalCards.length === 0) return;
+
+  // 1. Prepare original cards and ensure they are visible
+  originalCards.forEach(card => {
+    card.classList.remove('animate-on-scroll', 'visible');
+    card.style.opacity = '1';
+    card.style.transform = 'none';
+  });
+
+  // 2. Triple the cards for smooth infinite look
+  originalCards.forEach(card => {
+    const clone = card.cloneNode(true);
+    track.appendChild(clone);
+  });
+  originalCards.forEach(card => {
+    const clone = card.cloneNode(true);
+    track.appendChild(clone);
+  });
+
+  let scrollPos = 0;
+  let isPaused = false;
+  let animationId = null;
+  const speed = 0.8; // Pixels per frame
+
+  // Calculate width of exactly one set of cards (including gaps)
+  const getOneSetWidth = () => {
+    return track.scrollWidth / 3;
+  };
+
+  let oneSetWidth = 0;
+
+  function startCarousel() {
+    oneSetWidth = getOneSetWidth();
+    if (oneSetWidth === 0) {
+      setTimeout(startCarousel, 100);
+      return;
+    }
+    animationId = requestAnimationFrame(step);
+  }
+
+  window.addEventListener('resize', () => { oneSetWidth = getOneSetWidth(); });
+
+  function step() {
+    if (isPaused) return;
+
+    scrollPos += speed;
+    if (scrollPos >= oneSetWidth) {
+      scrollPos = 0;
+    }
+
+    track.style.transform = `translateX(${-scrollPos}px)`;
+    animationId = requestAnimationFrame(step);
+  }
+
+  // Start the engine after a small delay to ensure layout
+  setTimeout(startCarousel, 200);
+
+  track.addEventListener('click', (e) => {
+    const card = e.target.closest('.service-card');
+    if (!card) return;
+
+    if (card.classList.contains('active-card')) {
+      resumeCarousel();
+    } else {
+      snapToCard(card);
+    }
+  });
+
+  function snapToCard(card) {
+    isPaused = true;
+    cancelAnimationFrame(animationId);
+
+    // Calculate current offset to snap perfectly from current position
+    const cardRect = card.getBoundingClientRect();
+    const wrapperRect = wrapper.getBoundingClientRect();
+    const cardCenter = cardRect.left + cardRect.width / 2;
+    const wrapperCenter = wrapperRect.left + wrapperRect.width / 2;
+    const offsetToCenter = wrapperCenter - cardCenter;
+
+    track.style.transition = 'transform 0.8s cubic-bezier(0.23, 1, 0.32, 1)';
+    track.style.transform = `translateX(${-scrollPos + offsetToCenter}px)`;
+    
+    $$('.service-card').forEach(c => c.classList.remove('active-card'));
+    card.classList.add('active-card');
+  }
+
+  function resumeCarousel() {
+    if (!isPaused) return;
+    
+    track.style.transition = 'transform 0.5s ease-in-out';
+    track.style.transform = `translateX(${-scrollPos}px)`;
+    
+    $$('.service-card').forEach(c => c.classList.remove('active-card'));
+
+    // Wait for transition to finish before restarting loop
+    setTimeout(() => {
+      track.style.transition = 'none';
+      isPaused = false;
+      animationId = requestAnimationFrame(step);
+    }, 500);
+  }
+
+  // Resume on background click
+  wrapper.addEventListener('click', (e) => {
+    if (e.target === wrapper || e.target === track) {
+      resumeCarousel();
+    }
+  });
+}
