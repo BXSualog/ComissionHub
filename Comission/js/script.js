@@ -418,6 +418,11 @@ function initAdminPage() {
     $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
     $('#nav-requests')?.classList.add('active');
     
+    $('#requests-panel').style.display = 'block';
+    $('#wallet-panel').style.display = 'none';
+    $('#admin-stats-row').style.display = 'grid';
+    $('#topbar-title').textContent = 'All Requests';
+
     currentFilter = 'all';
     serviceFilter = 'all';
     searchQuery = '';
@@ -429,6 +434,18 @@ function initAdminPage() {
 
     currentPage = 1;
     renderTable();
+  });
+
+  $('#nav-wallet')?.addEventListener('click', () => {
+    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+    $('#nav-wallet')?.classList.add('active');
+
+    $('#requests-panel').style.display = 'none';
+    $('#wallet-panel').style.display = 'block';
+    $('#admin-stats-row').style.display = 'none';
+    $('#topbar-title').textContent = 'E-Wallet';
+
+    renderWalletContent();
   });
 
   /* --- Search & Filters --- */
@@ -543,7 +560,9 @@ function initAdminPage() {
         <tr>
           <td colspan="3">
             <div class="empty-state">
-              <div class="empty-icon">📋</div>
+              <div class="empty-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+              </div>
               <div>No requests found</div>
             </div>
           </td>
@@ -692,11 +711,96 @@ function initAdminPage() {
     const requests = getRequests();
     const req = requests.find(r => r.id === id);
     if (!req) return;
+    
     req.status = req.status === 'completed' ? 'pending' : 'completed';
     saveRequests(requests);
+    
+    if (req.status === 'completed') {
+      const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
+      notifs.unshift({
+        id: uid(),
+        reqId: req.id,
+        message: `Your commission request for "${req.service}" has been accepted!`,
+        date: new Date().toISOString(),
+        read: false
+      });
+      localStorage.setItem('commissionhub_notifications', JSON.stringify(notifs));
+    }
+
     renderStats();
     renderTable();
+    
+    // Also update wallet if currently visible
+    if ($('#nav-wallet')?.classList.contains('active')) {
+      renderWalletContent();
+    }
+
     showToast(`Request marked as ${req.status}.`, 'success');
+  }
+
+  /* ===========================
+     E-WALLET LOGIC
+     =========================== */
+  function parseBudget(str) {
+    if (!str) return 0;
+    // Extract number from strings like "Silver Tier (₱1,000)" or "₱15,000"
+    // Handle both Philippine Peso and Dollar signs just in case
+    const match = str.match(/[₱$](\d{1,3}(,\d{3})*)/);
+    if (match) {
+      return parseInt(match[1].replace(/,/g, '')) || 0;
+    }
+    // Fallback for simple numbers
+    const numOnly = str.match(/\d+/);
+    return numOnly ? parseInt(numOnly[0]) : 0;
+  }
+
+  function renderWalletContent() {
+    const tbody = $('#wallet-history-tbody');
+    const totalEl = $('#wallet-total-balance');
+    const countEl = $('#wallet-completed-count');
+    if (!tbody || !totalEl || !countEl) return;
+
+    const all = getRequests();
+    const completed = all.filter(r => r.status === 'completed');
+    
+    let totalIncome = 0;
+    
+    completed.forEach(r => {
+      totalIncome += parseBudget(r.budget);
+    });
+
+    totalEl.textContent = `₱${totalIncome.toLocaleString()}`;
+    countEl.textContent = completed.length;
+
+    if (completed.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="4">
+            <div class="empty-state">
+              <div class="empty-icon">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0-2 2c0 1.1.9 2 2 2h4v-4h-4z"></path></svg>
+              </div>
+              <div>No income history found yet.</div>
+            </div>
+          </td>
+        </tr>`;
+      return;
+    }
+
+    // Sort by date (newest first)
+    completed.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    tbody.innerHTML = completed.map(r => `
+      <tr>
+        <td data-label="Client">
+          <div class="td-name">${escapeHtml(r.name)}</div>
+          <div class="td-email">${escapeHtml(r.email)}</div>
+        </td>
+        <td data-label="Service">${escapeHtml(r.service)}</td>
+        <td data-label="Amount" class="td-amount">₱${parseBudget(r.budget).toLocaleString()}</td>
+        <td data-label="Date">${formatDate(r.date)}</td>
+      </tr>
+    `).join('');
   }
 
   /* --- Delete Request --- */
@@ -756,8 +860,72 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!rrModal && !notifModal) return;
 
+    function populateNotifications() {
+      const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
+      const notifBody = notifModal.querySelector('.modal-body');
+      
+      if (notifs.length === 0) {
+        notifBody.innerHTML = `
+          <div class="rr-empty-state">
+            <i class="fa-solid fa-bell-slash rr-empty-icon" style="opacity: 0.5;"></i>
+            <p>You have no new notifications.</p>
+          </div>
+        `;
+      } else {
+        notifBody.innerHTML = `
+          <div class="notifications-list" style="display:flex;flex-direction:column;gap:1rem; overflow-y:auto; max-height:60vh; padding-right:5px;">
+            ${notifs.map(n => `
+              <div class="notification-item" style="padding: 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); border-left: 3px solid ${n.read ? 'transparent' : 'var(--accent)'}; transition: transform 0.2s ease;">
+                <p style="margin-bottom:0.5rem; color: #fff; font-size: 0.95rem;">${escapeHtml(n.message)}</p>
+                <small style="color:var(--text-muted); font-size: 0.8rem;">${formatDate(n.date)}</small>
+              </div>
+            `).join('')}
+          </div>
+          <button class="btn btn-sm btn-secondary" id="clear-notifs-btn" style="margin-top: 1.5rem; width: 100%;">Clear Notifications</button>
+        `;
+        
+        const clearBtn = document.getElementById('clear-notifs-btn');
+        if (clearBtn) clearBtn.addEventListener('click', () => {
+          localStorage.removeItem('commissionhub_notifications');
+          populateNotifications();
+          updateNotificationBadge();
+        });
+      }
+    }
+
+    function updateNotificationBadge() {
+      const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
+      const unreadCount = notifs.filter(n => !n.read).length;
+      if (!notifOpenBtn) return;
+      
+      let badge = notifOpenBtn.querySelector('.notif-badge');
+      if (unreadCount > 0) {
+        if (!badge) {
+          badge = document.createElement('span');
+          badge.className = 'notif-badge';
+          badge.style.cssText = 'position:absolute; top:-4px; right:-4px; background:#f44336; color:#fff; font-size:0.65rem; padding:0.15rem 0.4rem; border-radius:50%; font-weight:bold; line-height: 1; pointer-events:none; box-shadow: 0 0 5px rgba(244,67,54,0.5);';
+          notifOpenBtn.style.position = 'relative';
+          notifOpenBtn.appendChild(badge);
+        }
+        badge.textContent = unreadCount;
+        badge.style.display = 'block';
+      } else if (badge) {
+        badge.style.display = 'none';
+      }
+    }
+
+    updateNotificationBadge();
+
     const openM = (modal) => {
       if (!modal) return;
+      if (modal === notifModal) {
+         populateNotifications();
+         // Mark all as read
+         const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
+         notifs.forEach(n => n.read = true);
+         localStorage.setItem('commissionhub_notifications', JSON.stringify(notifs));
+         updateNotificationBadge();
+      }
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
     };

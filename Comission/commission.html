@@ -25,7 +25,7 @@
   <!-- ===================== NAVBAR ===================== -->
   <nav id="navbar">
     <div class="nav-inner">
-      <a href="index.html" class="nav-logo">✦ CommissionHub</a>
+      <a href="dashboard.html" class="nav-logo">✦ CommissionHub</a>
 
       <ul class="nav-links">
       </ul>
@@ -41,7 +41,7 @@
   <!-- ===================== SIDEBAR ===================== -->
   <div id="sidebar" class="discord-sidebar">
     <div class="sidebar-tooltip-wrap">
-      <a href="index.html" class="discord-logo-btn" aria-label="CommissionHub Home">
+      <a href="dashboard.html" class="discord-logo-btn" aria-label="CommissionHub Home">
         <img src="assets/logo-icon.png" alt="CommissionHub Logo" class="discord-logo" />
       </a>
       <span class="sidebar-tooltip">Home</span>
@@ -127,20 +127,26 @@
                 </select>
                 <span class="form-error">Please select a service type.</span>
               </div>
-              <div class="form-group full" id="fg-budget">
-                <label class="form-label" for="req-budget">Budget Range *</label>
+              <div class="form-group full" id="fg-payment" style="display: none;">
+                <label class="form-label" for="req-payment">Payment Method *</label>
+                <select class="form-control form-input-dark" id="req-payment" name="payment">
+                  <option value="">— Select a payment method —</option>
+                  <option value="GCash">GCash</option>
+                  <option value="Maya">Maya</option>
+                  <option value="PalawanPay">PalawanPay</option>
+                </select>
+                <span class="form-error">Please select a payment method.</span>
+              </div>
+              <div class="form-group full" id="fg-budget" style="display: none;">
+                <label class="form-label" for="req-budget">Budget Range / Tier *</label>
                 <select class="form-control form-input-dark" id="req-budget" name="budget">
-                  <option value="">— Select a budget —</option>
-                  <option value="Under ₱1,500">Under ₱1,500</option>
-                  <option value="₱1,500 – ₱3,000">₱1,500 – ₱3,000</option>
-                  <option value="₱3,000 – ₱6,000">₱3,000 – ₱6,000</option>
-                  <option value="₱6,000 – ₱15,000">₱6,000 – ₱15,000</option>
-                  <option value="₱15,000+">₱15,000+</option>
+                  <option value="">— Select a tier —</option>
+                  <!-- Populated dynamically based on service -->
                 </select>
                 <span class="form-error">Please select a budget range.</span>
               </div>
               <div class="form-group full" id="fg-deadline">
-                <label class="form-label" for="req-deadline">Project Deadline</label>
+                <label class="form-label" for="req-deadline">Project Deadline <span style="font-size: 0.85em; opacity: 0.7; font-weight: normal;">(Optional)</span></label>
                 <input class="form-control form-input-dark" type="date" id="req-deadline" name="deadline" />
                 <span class="form-error">Please select a valid date.</span>
               </div>
@@ -155,7 +161,7 @@
                   <div class="file-upload-area" id="drop-area">
                     <div class="file-upload-message">
                       <i class="fas fa-cloud-upload-alt"></i>
-                      <h3>Drag & Drop Files Here</h3>
+                      <h3>Drag & Drop Files Here <span style="font-size: 0.7em; opacity: 0.7; font-weight: normal; display: block; margin-top: 0.2rem;">(Optional)</span></h3>
                       <p>or</p>
                       <label for="fileUpload" class="file-upload-btn">Browse Files</label>
                       <input type="file" id="fileUpload" multiple hidden>

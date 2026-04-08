@@ -48,6 +48,80 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($('#req-email')) $('#req-email').value = session.email || '';
   }
 
+  const CATEGORY_PRICING = {
+      "Voice Acting": [
+          { tier: "Silver Tier", price: "₱1,500" },
+          { tier: "Gold Tier", price: "₱3,000" },
+          { tier: "Diamond Tier", price: "₱6,000" }
+      ],
+      "Photo & Video Editing": [
+          { tier: "Silver Tier", price: "₱1,250" },
+          { tier: "Gold Tier", price: "₱3,750" },
+          { tier: "Diamond Tier", price: "₱7,500" }
+      ],
+      "Game Assets Designing": [
+          { tier: "Silver Tier", price: "₱1,750" },
+          { tier: "Gold Tier", price: "₱4,000" },
+          { tier: "Diamond Tier", price: "₱10,000" }
+      ],
+      "Graphics Designing": [
+          { tier: "Silver Tier", price: "₱1,000" },
+          { tier: "Gold Tier", price: "₱2,500" },
+          { tier: "Diamond Tier", price: "₱5,000" }
+      ],
+      "Web Designing": [
+          { tier: "Silver Tier", price: "₱4,000" },
+          { tier: "Gold Tier", price: "₱12,500" },
+          { tier: "Diamond Tier", price: "₱25,000" }
+      ],
+      "Other": [
+          { tier: "Custom Budget", price: "To be discussed" }
+      ]
+  };
+
+  // Dynamic Form Field Visibility
+  const reqService = $('#req-service');
+  const reqPayment = $('#req-payment');
+  const reqBudget = $('#req-budget');
+  const fgPayment = $('#fg-payment');
+  const fgBudget = $('#fg-budget');
+
+  if (reqService && fgPayment) {
+    reqService.addEventListener('change', (e) => {
+      if (e.target.value) {
+        fgPayment.style.display = 'flex';
+        // Populate budgets based on service
+        const category = e.target.value;
+        const tiers = CATEGORY_PRICING[category] || CATEGORY_PRICING["Other"];
+        if (reqBudget) {
+            reqBudget.innerHTML = '<option value="">— Select a tier —</option>';
+            tiers.forEach(t => {
+                const opt = document.createElement('option');
+                opt.value = `${t.tier} (${t.price})`;
+                opt.textContent = `${t.tier} (${t.price})`;
+                reqBudget.appendChild(opt);
+            });
+        }
+      } else {
+        fgPayment.style.display = 'none';
+        if (reqPayment) reqPayment.value = '';
+        if (fgBudget) fgBudget.style.display = 'none';
+        if (reqBudget) reqBudget.value = '';
+      }
+    });
+  }
+
+  if (reqPayment && fgBudget) {
+    reqPayment.addEventListener('change', (e) => {
+      if (e.target.value) {
+        fgBudget.style.display = 'flex';
+      } else {
+        fgBudget.style.display = 'none';
+        if (reqBudget) reqBudget.value = '';
+      }
+    });
+  }
+
   /* --- Commission Form Handling --- */
   const commissionForm = $('#commission-form');
   if (commissionForm) {
@@ -57,6 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const name    = $('#req-name')?.value.trim();
       const email   = $('#req-email')?.value.trim();
       const service = $('#req-service')?.value;
+      const payment = $('#req-payment')?.value;
       const budget  = $('#req-budget')?.value;
       const deadline = $('#req-deadline')?.value;
       const details = $('#req-details')?.value.trim();
@@ -66,6 +141,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!name)              { setError('fg-name', true); valid = false; } else setError('fg-name', false);
       if (!validateEmail(email)) { setError('fg-email', true); valid = false; } else setError('fg-email', false);
       if (!service)           { setError('fg-service', true); valid = false; } else setError('fg-service', false);
+      if (!payment)           { setError('fg-payment', true); valid = false; } else setError('fg-payment', false);
       if (!budget)            { setError('fg-budget', true); valid = false; } else setError('fg-budget', false);
       
       // Optional fields can be empty, but date should be valid if provided
@@ -88,7 +164,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
       const request = {
         id: uid(),
-        name, email, service, budget, deadline, details,
+        name, email, service, payment, budget, deadline, details,
         status: 'pending',
         date: new Date().toISOString(),
       };

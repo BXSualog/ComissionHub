@@ -77,6 +77,10 @@
             <span class="nav-icon">📋</span>
             <span>All Requests</span>
           </div>
+          <div class="sidebar-nav-item" id="nav-wallet">
+            <span class="nav-icon">💰</span>
+            <span>E-Wallet</span>
+          </div>
 
         </nav>
         <div class="sidebar-footer">
@@ -162,6 +166,43 @@
                 </thead>
                 <tbody id="requests-tbody"></tbody>
               </table>
+            </div>
+          </div>
+
+          <!-- WALLET PANEL -->
+          <div class="wallet-panel" id="wallet-panel" style="display:none;">
+            <div class="stats-row">
+              <div class="stat-card">
+                <span class="stat-card-label">Total Earnings</span>
+                <span class="stat-card-value" id="wallet-total-balance" style="color:var(--success);">₱0</span>
+                <span class="stat-card-sub">All-time revenue</span>
+              </div>
+
+              <div class="stat-card">
+                <span class="stat-card-label">Commissions</span>
+                <span class="stat-card-value" id="wallet-completed-count">0</span>
+                <span class="stat-card-sub">Successfully completed</span>
+              </div>
+            </div>
+
+            <div class="history-panel">
+              <div class="history-header">
+                <span class="toolbar-title">Transaction History</span>
+                <span class="history-subtitle">Latest income from clients</span>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Client</th>
+                      <th>Service</th>
+                      <th>Amount</th>
+                      <th>Date</th>
+                    </tr>
+                  </thead>
+                  <tbody id="wallet-history-tbody"></tbody>
+                </table>
+              </div>
             </div>
           </div>
 

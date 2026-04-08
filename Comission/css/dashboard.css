@@ -1,5 +1,5 @@
 /* =========================================
-   DASHBOARD SPECIFIC STYLES
+   DASHBOARD 
    ========================================= */
 
 /* --- Layout & Background --- */
@@ -565,6 +565,35 @@
   margin-bottom: 0.5rem;
   color: var(--text-primary);
 }
+
+.tier-silver .tier-name {
+  background: linear-gradient(135deg, #b0b2b8, #ffffff, #888a8f);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
+}
+
+.tier-gold .tier-name {
+  background: linear-gradient(135deg, #d4af37, #fff2cd, #c5a017);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 12px rgba(212, 175, 55, 0.4);
+}
+
+.tier-diamond .tier-name {
+  background: linear-gradient(135deg, #b9f2ff, #ffffff, #7ce8ff);
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 15px rgba(124, 232, 255, 0.6);
+}
+
+.pricing-tier.tier-silver:hover { border-color: #b0b2b8; box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 20px rgba(176, 178, 184, 0.2); transform: translateY(-7px) scale(1.02); }
+.pricing-tier.tier-gold:hover { border-color: #d4af37; box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 20px rgba(212, 175, 55, 0.25); transform: translateY(-7px) scale(1.02); }
+.pricing-tier.tier-diamond { border-color: rgba(124, 232, 255, 0.3); }
+.pricing-tier.tier-diamond:hover { border-color: #7ce8ff; box-shadow: 0 16px 48px rgba(0,0,0,0.3), 0 0 25px rgba(124, 232, 255, 0.4); transform: translateY(-7px) scale(1.02); }
 
 .pricing-price {
   font-size: 2rem;
