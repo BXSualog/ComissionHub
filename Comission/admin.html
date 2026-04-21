@@ -81,6 +81,10 @@
             <span class="nav-icon">💰</span>
             <span>E-Wallet</span>
           </div>
+          <div class="sidebar-nav-item" id="nav-users">
+            <span class="nav-icon">👤</span>
+            <span>User Management</span>
+          </div>
 
         </nav>
         <div class="sidebar-footer">
@@ -206,6 +210,30 @@
             </div>
           </div>
 
+          <!-- USERS PANEL -->
+          <div class="users-panel" id="users-panel" style="display:none;">
+            <div class="history-panel">
+              <div class="history-header">
+                <span class="toolbar-title"><h3>Sualog |  Valenciano | Miranda | Felizardo | Delfin</h3></span>
+                <span class="history-subtitle">Manage client accounts</span>
+              </div>
+              <div class="table-wrap">
+                <table> 
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Name</th>
+                      <th>Email</th>
+                      <th>Joined</th>
+                      <th>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="users-tbody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
 
 
           <div id="pagination-container" class="pagination-container"></div>
@@ -270,6 +298,32 @@
     </div>
   </div>
 
+  <!-- Edit User Modal -->
+  <div class="modal-overlay" id="edit-user-modal" role="dialog" aria-modal="true">
+    <div class="modal confirm-modal-wrap">
+      <div class="modal-header">
+        <h3>Edit User</h3>
+        <button class="modal-close" id="edit-user-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="edit-user-id" />
+        <div class="form-group">
+          <label class="form-label" for="edit-user-name">Name</label>
+          <input class="form-control" type="text" id="edit-user-name" />
+        </div>
+        <div class="form-group mt-3">
+          <label class="form-label" for="edit-user-email">Email Address</label>
+          <input class="form-control" type="email" id="edit-user-email" />
+        </div>
+      </div>
+      <div class="modal-footer confirm-modal-footer">
+        <button class="btn btn-secondary btn-sm" id="edit-user-cancel">Cancel</button>
+        <button class="btn btn-primary btn-sm" id="edit-user-save">Save Changes</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api_client.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>

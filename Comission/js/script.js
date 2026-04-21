@@ -1,21 +1,7 @@
-/* =========================================
-   COMMISSIONHUB – MASTER SCRIPT
-   Handles: Client side + Admin Dashboard
-   ========================================= */
-
 'use strict';
 
-/* ===========================
-   CONSTANTS & CONFIG
-   =========================== */
-const STORAGE_KEY = 'commissionhub_requests';
-const USERS_KEY   = 'commissionhub_users';
-const SESSION_KEY = 'commissionhub_session';
 const ADMIN_CREDS = { user: 'admin', pass: 'admin123' };
 
-/* ===========================
-   UTILS
-   =========================== */
 const $ = (sel, ctx = document) => ctx.querySelector(sel);
 const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
@@ -24,7 +10,9 @@ function uid() {
 }
 
 function formatDate(iso) {
+  if (!iso) return 'N/A';
   const d = new Date(iso);
+  if (isNaN(d.getTime())) return 'N/A';
   return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
 }
 
@@ -36,59 +24,30 @@ function escapeHtml(str = '') {
     .replace(/"/g, '&quot;');
 }
 
-/* ===========================
-   LOCAL STORAGE HELPERS
-   =========================== */
-function getRequests() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-  catch { return []; }
+
+async function getSession() {
+  const res = await API.getSession();
+  return res.success ? res.user : null;
 }
 
-function saveRequests(list) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+
+async function logout() {
+  await API.logout();
+  window.location.href = 'index.html';
 }
 
-function getUsers() {
-  try { return JSON.parse(localStorage.getItem(USERS_KEY)) || []; }
-  catch { return []; }
-}
 
-function saveUsers(list) {
-  localStorage.setItem(USERS_KEY, JSON.stringify(list));
-}
-
-function getSession() {
-  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); }
-  catch { return null; }
-}
-
-function setSession(data) {
-  sessionStorage.setItem(SESSION_KEY, JSON.stringify(data));
-}
-
-function clearSession() {
-  sessionStorage.removeItem(SESSION_KEY);
-}
-
-/* ===========================
-   THEME SYSTEM
-   =========================== */
 function getTheme() {
   return 'dark';
 }
 
 function applyTheme(theme) {
   document.documentElement.setAttribute('data-theme', 'dark');
-  localStorage.setItem('commissionhub_theme', 'dark');
 }
 
 function toggleTheme() {
-  // Theme toggling is disabled.
 }
 
-/* ===========================
-   TOAST NOTIFICATIONS
-   =========================== */
 function showToast(message, type = 'info', duration = 3500) {
   const container = $('#toast-container');
   if (!container) return;
@@ -109,9 +68,6 @@ function showToast(message, type = 'info', duration = 3500) {
   }, duration);
 }
 
-/* ===========================
-   LOADING SCREEN
-   =========================== */
 function hideLoadingScreen() {
   const screen = $('#loading-screen');
   if (!screen) return;
@@ -121,9 +77,6 @@ function hideLoadingScreen() {
   }, 900);
 }
 
-/* ===========================
-   FORM VALIDATION HELPERS
-   =========================== */
 function setError(groupId, show) {
   const group = $(`#${groupId}`);
   if (!group) return;
@@ -134,9 +87,6 @@ function validateEmail(email) {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
 }
 
-/* ===========================
-   SCROLL ANIMATIONS
-   =========================== */
 function initScrollAnimations() {
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(e => {
@@ -150,11 +100,14 @@ function initScrollAnimations() {
   $$('.animate-on-scroll').forEach(el => observer.observe(el));
 }
 
-/* ===================================================
-   CLIENT SIDE (index.html logic)
-   =================================================== */
-function initClientPage() {
-  /* --- Nav scroll effect --- */
+async function initClientPage() {
+  const session = await getSession();
+  
+  // Update greeting if on dashboard
+  const greetingSpan = $('.greeting-title .gradient-text');
+  if (greetingSpan && session) {
+    greetingSpan.textContent = session.name;
+  }
   const navbar = $('#navbar');
   if (navbar) {
     window.addEventListener('scroll', () => {
@@ -162,7 +115,6 @@ function initClientPage() {
     });
   }
 
-  /* --- Hamburger mobile menu --- */
   const hamburger = $('#nav-hamburger');
   const mobileMenu = $('#mobile-menu');
   if (hamburger && mobileMenu) {
@@ -171,7 +123,6 @@ function initClientPage() {
       hamburger.classList.toggle('active', open);
       hamburger.setAttribute('aria-expanded', open);
     });
-    // Close on nav link click
     $$('#mobile-menu a').forEach(a => {
       a.addEventListener('click', () => {
         mobileMenu.classList.remove('open');
@@ -180,14 +131,12 @@ function initClientPage() {
     });
   }
 
-  /* --- Theme toggle --- */
   const themeBtn = $('#theme-toggle');
   if (themeBtn) themeBtn.addEventListener('click', toggleTheme);
 
   const sidebarThemeBtn = $('#sidebar-theme-toggle');
   if (sidebarThemeBtn) sidebarThemeBtn.addEventListener('click', toggleTheme);
 
-  /* --- Auth Modal --- */
   const authModal    = $('#auth-modal');
   const loginPanel   = $('#login-panel');
   const signupPanel  = $('#signup-panel');
@@ -223,10 +172,9 @@ function initClientPage() {
   $('#go-to-signup')?.addEventListener('click', (e) => { e.preventDefault(); openModal('signup'); });
   $('#go-to-login')?.addEventListener('click', (e) => { e.preventDefault(); openModal('login'); });
 
-  /* --- Dashboard Button Auth Check --- */
-  $('#btn-go-dashboard')?.addEventListener('click', (e) => {
+  $('#btn-go-dashboard')?.addEventListener('click', async (e) => {
     e.preventDefault();
-    const session = getSession();
+    const session = await getSession();
     if (!session) {
       openModal('login');
       showToast('Please sign in to access your dashboard.', 'info');
@@ -235,8 +183,7 @@ function initClientPage() {
     }
   });
 
-  /* --- Login Submit --- */
-  $('#btn-do-login')?.addEventListener('click', () => {
+  $('#btn-do-login')?.addEventListener('click', async () => {
     const email = $('#login-email')?.value.trim();
     const pw    = $('#login-password')?.value;
     let valid = true;
@@ -249,25 +196,22 @@ function initClientPage() {
 
     if (!valid) return;
 
-    const users = getUsers();
-    const user = users.find(u => u.email === email && u.password === pw);
-    if (!user) {
+    const res = await API.login(email, pw);
+    if (!res.success) {
       setError('fg-login-email', true);
       const err = $('#fg-login-email .form-error');
-      if (err) err.textContent = 'Invalid email or password.';
+      if (err) err.textContent = res.message || 'Invalid email or password.';
       return;
     }
 
-    setSession({ email, name: user.name });
     closeModal();
-    showToast(`Welcome back, ${user.name}! 👋`, 'success');
+    showToast(`Welcome back, ${res.user.name}! 👋`, 'success');
     setTimeout(() => {
       window.location.href = 'dashboard.html';
     }, 1000);
   });
 
-  /* --- Signup Submit --- */
-  $('#btn-do-signup')?.addEventListener('click', () => {
+  $('#btn-do-signup')?.addEventListener('click', async () => {
     const name  = $('#su-name')?.value.trim();
     const email = $('#su-email')?.value.trim();
     const pw    = $('#su-password')?.value;
@@ -284,49 +228,79 @@ function initClientPage() {
 
     if (!valid) return;
 
-    const users = getUsers();
-    if (users.find(u => u.email === email)) {
+    const res = await API.signup(name, email, pw);
+    if (!res.success) {
       setError('fg-su-email', true);
       const err = $('#fg-su-email .form-error');
-      if (err) err.textContent = 'Email already registered.';
+      if (err) err.textContent = res.message || 'Signup failed.';
       return;
     }
 
-    users.push({ name, email, password: pw, created: new Date().toISOString() });
-    saveUsers(users);
-    setSession({ email, name });
     closeModal();
-    showToast(`Account created! Welcome, ${name} 🎉`, 'success');
+    showToast(`Account created! Welcome, ${res.user.name} 🎉`, 'success');
     setTimeout(() => {
       window.location.href = 'dashboard.html';
     }, 1000);
   });
 
-  /* --- Google Buttons (simulated) --- */
-  $('#btn-google-login')?.addEventListener('click', () => {
-    showToast('Google Sign-In is not connected in demo mode.', 'info');
-  });
-  $('#btn-google-signup')?.addEventListener('click', () => {
-    showToast('Google Sign-Up is not connected in demo mode.', 'info');
-  });
-
-  /* --- Commission Form Logic Moved to commission.js --- */
-
 }
 
-/* ===================================================
-   ADMIN SIDE (admin.html logic)
-   =================================================== */
 function initAdminPage() {
   const loginView     = $('#admin-login-view');
   const dashboardView = $('#admin-dashboard-view');
 
   if (!loginView || !dashboardView) return;
 
-  /* --- Theme toggle --- */
+  // Centralized Sidebar Navigation Handler
+  $('.sidebar-nav')?.addEventListener('click', (e) => {
+    const item = e.target.closest('.sidebar-nav-item');
+    if (!item) return;
+
+    const id = item.id;
+    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+    item.classList.add('active');
+
+    // Hide all panels first
+    $('#requests-panel').style.display = 'none';
+    $('#wallet-panel').style.display = 'none';
+    $('#users-panel').style.display = 'none';
+    $('#admin-stats-row').style.display = 'none';
+
+    if (id === 'nav-requests') {
+      $('#requests-panel').style.display = 'block';
+      $('#admin-stats-row').style.display = 'grid';
+      $('#topbar-title').textContent = 'All Requests';
+      
+      // Reset filters
+      currentFilter = 'all';
+      serviceFilter = 'all';
+      searchQuery = '';
+      if ($('#service-filter')) $('#service-filter').value = 'all';
+      if ($('#status-filter')) $('#status-filter').value = 'all';
+      if ($('#search-input')) $('#search-input').value = '';
+
+      currentPage = 1;
+      renderTable();
+    } 
+    else if (id === 'nav-wallet') {
+      $('#wallet-panel').style.display = 'block';
+      $('#topbar-title').textContent = 'E-Wallet';
+      renderWalletContent();
+    } 
+    else if (id === 'nav-users') {
+      $('#users-panel').style.display = 'block';
+      $('#topbar-title').textContent = 'User Management';
+      renderUsersContent();
+    }
+
+    // Close sidebar on mobile
+    if (window.innerWidth <= 900) {
+      adminSidebar?.classList.remove('open');
+    }
+  });
+
   $('#adm-theme-toggle')?.addEventListener('click', toggleTheme);
 
-  /* --- Sidebar toggle (mobile) --- */
   const sidebarToggle = $('#sidebar-toggle');
   const adminSidebar  = $('#admin-sidebar');
 
@@ -346,8 +320,7 @@ function initAdminPage() {
   window.addEventListener('resize', checkSidebarMode);
   checkSidebarMode();
 
-  /* ---- State ---- */
-  let currentFilter = 'all'; // 'all' | 'pending' | 'completed'
+  let currentFilter = 'all'; 
   let searchQuery   = '';
   let serviceFilter = 'all';
   let currentPage   = 1;
@@ -356,6 +329,17 @@ function initAdminPage() {
   function showDashboard() {
     loginView.style.display = 'none';
     dashboardView.style.display = 'block';
+    
+    // Reset to requests view
+    $('#requests-panel').style.display = 'block';
+    $('#wallet-panel').style.display = 'none';
+    $('#users-panel').style.display = 'none';
+    $('#admin-stats-row').style.display = 'grid';
+    $('#topbar-title').textContent = 'All Requests';
+    
+    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
+    $('#nav-requests')?.classList.add('active');
+
     renderStats();
     currentPage = 1;
     renderTable();
@@ -366,7 +350,6 @@ function initAdminPage() {
     dashboardView.style.display = 'none';
   }
 
-  /* --- Admin Login --- */
   const admLoginBtn = $('#adm-login-btn');
   const admLoginErr = $('#adm-login-error');
 
@@ -382,7 +365,7 @@ function initAdminPage() {
 
     if (user === ADMIN_CREDS.user && pw === ADMIN_CREDS.pass) {
       admLoginErr.style.display = 'none';
-      localStorage.setItem('commissionhub_admin', '1');
+      sessionStorage.setItem('commissionhub_admin', '1');
       showDashboard();
       showToast('Welcome back, Admin! 🔐', 'success');
     } else {
@@ -397,58 +380,18 @@ function initAdminPage() {
     input.addEventListener('keydown', e => { if (e.key === 'Enter') doAdminLogin(); });
   });
 
-  /* --- Auto-login if already authenticated --- */
-  if (localStorage.getItem('commissionhub_admin') === '1') {
+  if (sessionStorage.getItem('commissionhub_admin') === '1') {
     showDashboard();
   } else {
     showLogin();
   }
 
-  /* --- Logout --- */
   $('#adm-logout-btn')?.addEventListener('click', () => {
-    localStorage.removeItem('commissionhub_admin');
+    sessionStorage.removeItem('commissionhub_admin');
     showLogin();
     showToast('Signed out successfully.', 'info');
   });
 
-
-
-  /* --- Sidebar Navigation --- */
-  $('#nav-requests')?.addEventListener('click', () => {
-    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-    $('#nav-requests')?.classList.add('active');
-    
-    $('#requests-panel').style.display = 'block';
-    $('#wallet-panel').style.display = 'none';
-    $('#admin-stats-row').style.display = 'grid';
-    $('#topbar-title').textContent = 'All Requests';
-
-    currentFilter = 'all';
-    serviceFilter = 'all';
-    searchQuery = '';
-    
-    // Reset dropdowns
-    if ($('#service-filter')) $('#service-filter').value = 'all';
-    if ($('#status-filter')) $('#status-filter').value = 'all';
-    if ($('#search-input')) $('#search-input').value = '';
-
-    currentPage = 1;
-    renderTable();
-  });
-
-  $('#nav-wallet')?.addEventListener('click', () => {
-    $$('.sidebar-nav-item').forEach(el => el.classList.remove('active'));
-    $('#nav-wallet')?.classList.add('active');
-
-    $('#requests-panel').style.display = 'none';
-    $('#wallet-panel').style.display = 'block';
-    $('#admin-stats-row').style.display = 'none';
-    $('#topbar-title').textContent = 'E-Wallet';
-
-    renderWalletContent();
-  });
-
-  /* --- Search & Filters --- */
   $('#status-filter')?.addEventListener('change', e => {
     currentFilter = e.target.value;
     currentPage = 1;
@@ -461,26 +404,26 @@ function initAdminPage() {
     renderTable();
   });
 
-
-
   $('#service-filter')?.addEventListener('change', e => {
     serviceFilter = e.target.value;
     currentPage = 1;
     renderTable();
   });
 
-  /* --- Clear All --- */
   $('#btn-clear-all')?.addEventListener('click', () => {
-    openConfirm('Delete ALL commission requests? This cannot be undone.', () => {
-      saveRequests([]);
-      renderStats();
-      currentPage = 1;
-      renderTable();
-      showToast('All requests cleared.', 'warning');
+    openConfirm('Delete ALL commission requests from the database? This cannot be undone.', async () => {
+      const res = await API.clearAllCommissions();
+      if (res.success) {
+        renderStats();
+        currentPage = 1;
+        renderTable();
+        showToast('All requests cleared from database.', 'warning');
+      } else {
+        showToast(res.message || 'Clear failed.', 'error');
+      }
     });
   });
 
-  /* --- Confirm Modal --- */
   const confirmModal = $('#confirm-modal');
   let confirmCallback = null;
 
@@ -505,53 +448,52 @@ function initAdminPage() {
     closeConfirm();
   });
 
-  /* ===========================
-     RENDER STATS
-     =========================== */
-  function renderStats() {
-    const all       = getRequests();
-    const pending   = all.filter(r => r.status === 'pending').length;
-    const completed = all.filter(r => r.status === 'completed').length;
-    const rate      = all.length > 0 ? Math.round((completed / all.length) * 100) + '%' : '—';
+  async function renderStats(requests = null) {
+    if (!requests) {
+      const res = await API.getAllRequests();
+      requests = res.success ? res.data : [];
+    }
+    const pending   = requests.filter(r => r.status === 'pending').length;
+    const completed = requests.filter(r => r.status === 'completed').length;
+    const rate      = requests.length > 0 ? Math.round((completed / requests.length) * 100) + '%' : '—';
 
     const statTotal     = $('#stat-total');
     const statPending   = $('#stat-pending');
     const statCompleted = $('#stat-completed');
     const statRate      = $('#stat-rate');
 
-    if (statTotal)     statTotal.textContent     = all.length;
+    if (statTotal)     statTotal.textContent     = requests.length;
     if (statPending)   statPending.textContent   = pending;
     if (statCompleted) statCompleted.textContent = completed;
     if (statRate)      statRate.textContent      = rate;
   }
 
-  /* ===========================
-     RENDER TABLE
-     =========================== */
-  function renderTable() {
+  async function renderTable() {
     const tbody = $('#requests-tbody');
     if (!tbody) return;
 
-    let requests = getRequests();
+    const res = await API.getAllRequests();
+    let requests = res.success ? res.data : [];
 
-    // Status filter
     if (currentFilter !== 'all') {
       requests = requests.filter(r => r.status === currentFilter);
     }
 
-    // Service filter
     if (serviceFilter !== 'all') {
-      requests = requests.filter(r => r.service === serviceFilter);
+      requests = requests.filter(r => r.service_type === serviceFilter);
     }
 
-    // Search filter
     if (searchQuery) {
-      requests = requests.filter(r =>
-        r.name.toLowerCase().includes(searchQuery)  ||
-        r.email.toLowerCase().includes(searchQuery) ||
-        r.service.toLowerCase().includes(searchQuery)
-      );
+      requests = requests.filter(r => {
+        const name  = (r.client_name || r.name || '').toLowerCase();
+        const email = (r.client_email || r.email || '').toLowerCase();
+        const serv  = (r.service_type || '').toLowerCase();
+        return name.includes(searchQuery) || email.includes(searchQuery) || serv.includes(searchQuery);
+      });
     }
+
+    console.log("Admin Data Loading:", requests); // Debug
+    if (requests.length > 0) console.table(requests);
 
     const totalItems = requests.length;
 
@@ -571,16 +513,19 @@ function initAdminPage() {
       return;
     }
 
-    // Slice for pagination
     const start = (currentPage - 1) * itemsPerPage;
     const end   = start + itemsPerPage;
     const paginatedItems = requests.slice(start, end);
 
     tbody.innerHTML = paginatedItems.map(r => `
-      <tr data-id="${escapeHtml(r.id)}">
-        <td data-label="Client" class="td-clickable td-client-cell" data-id="${escapeHtml(r.id)}">
-          <div class="td-name">${escapeHtml(r.name)}</div>
-          <div class="td-email">${escapeHtml(r.email)}</div>
+      <tr data-id="${escapeHtml(r.order_id)}">
+        <td data-label="Client" class="td-clickable td-client-cell" data-id="${escapeHtml(r.order_id)}" title="Click to view full project details">
+          <div class="td-name" style="color:var(--text-primary) !important; font-weight:700 !important; display:block !important; pointer-events:none;">
+            ${escapeHtml(r.client_name || r.name || 'Unknown User')}
+          </div>
+          <div class="td-email" style="color:var(--text-muted) !important; display:block !important; pointer-events:none;">
+            ${escapeHtml(r.client_email || r.email || 'N/A')}
+          </div>
         </td>
         <td data-label="Status">
           <span class="badge badge-${r.status === 'completed' ? 'completed' : 'pending'}">
@@ -590,12 +535,12 @@ function initAdminPage() {
         <td data-label="Actions">
           <div class="td-actions">
             <button class="btn btn-sm ${r.status === 'completed' ? 'btn-secondary' : 'btn-success'} btn-toggle-status"
-              data-id="${escapeHtml(r.id)}"
+              data-id="${escapeHtml(r.order_id)}"
               title="${r.status === 'completed' ? 'Mark as Pending' : 'Mark as Completed'}">
               ${r.status === 'completed' ? '↩' : '✓'}
             </button>
             <button class="btn btn-sm btn-danger btn-delete-request"
-              data-id="${escapeHtml(r.id)}"
+              data-id="${escapeHtml(r.order_id)}"
               title="Delete Request">
               🗑
             </button>
@@ -606,7 +551,6 @@ function initAdminPage() {
 
     renderPagination(totalItems);
 
-    /* Bind row actions */
     $$('.td-client-cell').forEach(cell => {
       cell.addEventListener('click', () => openDetails(cell.dataset.id));
     });
@@ -626,9 +570,6 @@ function initAdminPage() {
     });
   }
 
-
-
-  /* --- Pagination Logic --- */
   function renderPagination(totalItems) {
     const container = $('#pagination-container');
     if (!container) return;
@@ -645,7 +586,6 @@ function initAdminPage() {
       </button>
     `;
 
-    // Simple pagination logic
     for (let i = 1; i <= totalPages; i++) {
       if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
         html += `
@@ -666,7 +606,6 @@ function initAdminPage() {
 
     container.innerHTML = html;
 
-    // Bind clicks
     $$('.pagination-btn', container).forEach(btn => {
       btn.addEventListener('click', () => {
         const page = parseInt(btn.dataset.page);
@@ -674,26 +613,32 @@ function initAdminPage() {
           currentPage = page;
           renderTable();
           
-          // Scroll to top of content
           $('.admin-content')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       });
     });
   }
 
-  /* --- Details Modal --- */
   const detailsModal = $('#details-modal');
 
-  function openDetails(id) {
-    const requests = getRequests();
-    const req = requests.find(r => r.id === id);
-    if (!req) return;
+  async function openDetails(id) {
+    if (!id) return;
+    const res = await API.getAllRequests();
+    const requests = res.success ? res.data : [];
+    const req = requests.find(r => r.order_id === id);
+    if (!req) {
+      showToast('Could not find request details.', 'error');
+      return;
+    }
 
-    $('#det-date').textContent     = formatDate(req.date);
-    $('#det-deadline').textContent = formatDate(req.deadline);
-    $('#det-budget').textContent   = req.budget;
-    $('#det-service').textContent  = req.service;
-    $('#det-details').textContent  = req.details;
+    console.log("Opening Details for:", req.order_id);
+
+    // Populate Fields with fallbacks
+    $('#det-date').textContent     = formatDate(req.created_at);
+    $('#det-deadline').textContent = req.deadline ? formatDate(req.deadline) : 'No deadline set';
+    $('#det-budget').textContent   = req.budget_tier || 'N/A';
+    $('#det-service').textContent  = req.service_type || 'N/A';
+    $('#det-details').textContent  = req.description || 'No description provided.';
 
     detailsModal?.classList.add('open');
   }
@@ -706,73 +651,61 @@ function initAdminPage() {
   $('#details-close-btn')?.addEventListener('click', closeDetails);
   detailsModal?.addEventListener('click', e => { if (e.target === detailsModal) closeDetails(); });
 
-  /* --- Toggle Status --- */
-  function toggleStatus(id) {
-    const requests = getRequests();
-    const req = requests.find(r => r.id === id);
+  async function toggleStatus(id) {
+    const resReq = await API.getAllRequests();
+    const requests = resReq.success ? resReq.data : [];
+    const req = requests.find(r => r.order_id === id);
     if (!req) return;
     
-    req.status = req.status === 'completed' ? 'pending' : 'completed';
-    saveRequests(requests);
+    const newStatus = req.status === 'completed' ? 'pending' : 'completed';
     
-    if (req.status === 'completed') {
-      const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
-      notifs.unshift({
-        id: uid(),
-        reqId: req.id,
-        message: `Your commission request for "${req.service}" has been accepted!`,
-        date: new Date().toISOString(),
-        read: false
-      });
-      localStorage.setItem('commissionhub_notifications', JSON.stringify(notifs));
-    }
+    // Use the pre-stored numeric amount from the database
+    const amount = parseFloat(req.budget_amount) || 0;
 
-    renderStats();
-    renderTable();
+    const res = await API.updateStatus(id, newStatus, amount);
     
-    // Also update wallet if currently visible
-    if ($('#nav-wallet')?.classList.contains('active')) {
-      renderWalletContent();
-    }
+    if (res.success) {
+      renderStats();
+      renderTable();
+      
+      if ($('#nav-wallet')?.classList.contains('active')) {
+        renderWalletContent();
+      }
 
-    showToast(`Request marked as ${req.status}.`, 'success');
+      showToast(`Request marked as ${newStatus}.`, 'success');
+    } else {
+      showToast(res.message || 'Status update failed.', 'error');
+    }
   }
 
-  /* ===========================
-     E-WALLET LOGIC
-     =========================== */
   function parseBudget(str) {
     if (!str) return 0;
-    // Extract number from strings like "Silver Tier (₱1,000)" or "₱15,000"
-    // Handle both Philippine Peso and Dollar signs just in case
     const match = str.match(/[₱$](\d{1,3}(,\d{3})*)/);
     if (match) {
       return parseInt(match[1].replace(/,/g, '')) || 0;
     }
-    // Fallback for simple numbers
     const numOnly = str.match(/\d+/);
     return numOnly ? parseInt(numOnly[0]) : 0;
   }
 
-  function renderWalletContent() {
+  async function renderWalletContent() {
     const tbody = $('#wallet-history-tbody');
     const totalEl = $('#wallet-total-balance');
     const countEl = $('#wallet-completed-count');
     if (!tbody || !totalEl || !countEl) return;
 
-    const all = getRequests();
-    const completed = all.filter(r => r.status === 'completed');
+    const res = await API.getWalletHistory();
+    const history = res.success ? res.data : [];
     
     let totalIncome = 0;
-    
-    completed.forEach(r => {
-      totalIncome += parseBudget(r.budget);
+    history.forEach(h => {
+      totalIncome += parseFloat(h.amount) || 0;
     });
 
     totalEl.textContent = `₱${totalIncome.toLocaleString()}`;
-    countEl.textContent = completed.length;
+    countEl.textContent = history.length;
 
-    if (completed.length === 0) {
+    if (history.length === 0) {
       tbody.innerHTML = `
         <tr>
           <td colspan="4">
@@ -787,45 +720,125 @@ function initAdminPage() {
       return;
     }
 
-    // Sort by date (newest first)
-    completed.sort((a, b) => new Date(b.date) - new Date(a.date));
-
-    tbody.innerHTML = completed.map(r => `
+    tbody.innerHTML = history.map(h => `
       <tr>
         <td data-label="Client">
-          <div class="td-name">${escapeHtml(r.name)}</div>
-          <div class="td-email">${escapeHtml(r.email)}</div>
+          <div class="td-name">${escapeHtml(h.client_name)}</div>
+          <div class="td-email">${escapeHtml(h.client_email)}</div>
         </td>
-        <td data-label="Service">${escapeHtml(r.service)}</td>
-        <td data-label="Amount" class="td-amount">₱${parseBudget(r.budget).toLocaleString()}</td>
-        <td data-label="Date">${formatDate(r.date)}</td>
+        <td data-label="Service">${escapeHtml(h.service)}</td>
+        <td data-label="Amount" class="td-amount">₱${parseFloat(h.amount).toLocaleString()}</td>
+        <td data-label="Date">${formatDate(h.processed_at)}</td>
       </tr>
     `).join('');
   }
 
-  /* --- Delete Request --- */
-  function deleteRequest(id) {
-    let requests = getRequests();
-    requests = requests.filter(r => r.id !== id);
-    saveRequests(requests);
-    renderStats();
-    // Adjust page if current page becomes empty
-    const totalPages = Math.ceil(requests.length / itemsPerPage);
-    if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
-    renderTable();
-    showToast('Request deleted.', 'warning');
+  async function renderUsersContent() {
+    const tbody = $('#users-tbody');
+    if (!tbody) return;
+
+    const res = await API.getUsers();
+    const users = res.success ? res.data : [];
+
+    if (users.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="5">
+            <div class="empty-state">
+              <div class="empty-icon">👤</div>
+              <div>No registered users found.</div>
+            </div>
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td data-label="ID">
+          <span style="font-family: monospace; font-weight: 600; color: var(--accent); opacity: 0.8;">#${u.id}</span>
+        </td>
+        <td data-label="Name">
+          <div class="td-name">${escapeHtml(u.name)}</div>
+        </td>
+        <td data-label="Email">${escapeHtml(u.email)}</td>
+        <td data-label="Joined">${formatDate(u.created_at)}</td>
+        <td data-label="Actions">
+          <div class="td-actions">
+            <button class="btn btn-sm btn-edit-user btn-warning" data-id="${u.id}" data-name="${escapeHtml(u.name)}" data-email="${escapeHtml(u.email)}" title="Edit User">Edit</button>
+            <button class="btn btn-sm btn-delete-user btn-danger" data-id="${u.id}" title="Delete User">Delete</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+
+    // Attach listeners
+    tbody.querySelectorAll('.btn-delete-user').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const id = btn.dataset.id;
+        openConfirm('Are you sure you want to delete this user? This cannot be undone.', async () => {
+          const res = await API.deleteUser(id);
+          if (res.success) {
+            showToast('User deleted successfully.', 'warning');
+            renderUsersContent();
+          } else {
+            showToast(res.message || 'Delete failed.', 'error');
+          }
+        });
+      });
+    });
+
+    tbody.querySelectorAll('.btn-edit-user').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const { id, name, email } = btn.dataset;
+        $('#edit-user-id').value = id;
+        $('#edit-user-name').value = name;
+        $('#edit-user-email').value = email;
+        $('#edit-user-modal').classList.add('open');
+      });
+    });
+  }
+
+  // Edit User Modal Handling
+  $('#edit-user-modal-close')?.addEventListener('click', () => $('#edit-user-modal').classList.remove('open'));
+  $('#edit-user-cancel')?.addEventListener('click', () => $('#edit-user-modal').classList.remove('open'));
+  $('#edit-user-save')?.addEventListener('click', async () => {
+    const id = $('#edit-user-id').value;
+    const name = $('#edit-user-name').value;
+    const email = $('#edit-user-email').value;
+
+    if (!name || !email) {
+        showToast('Please fill all fields.', 'error');
+        return;
+    }
+
+    const res = await API.updateUser({ id, name, email });
+    if (res.success) {
+        showToast('User updated successfully.', 'success');
+        $('#edit-user-modal').classList.remove('open');
+        renderUsersContent();
+    } else {
+        showToast(res.message || 'Update failed.', 'error');
+    }
+  });
+
+  async function deleteRequest(id) {
+    const res = await API.deleteCommission(id);
+    if (res.success) {
+      renderStats();
+      renderTable();
+      showToast('Request deleted from database.', 'warning');
+    } else {
+      showToast(res.message || 'Delete failed.', 'error');
+    }
   }
 }
 
-/* ===========================
-   ROUTE DETECTION & INIT
-   =========================== */
 document.addEventListener('DOMContentLoaded', () => {
   applyTheme(getTheme());
   hideLoadingScreen();
   initScrollAnimations();
 
-  /* --- Password Visibility Toggle --- */
   $$('.btn-toggle-password').forEach(btn => {
     btn.addEventListener('click', () => {
       const input = btn.previousElementSibling;
@@ -848,7 +861,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  /* --- Sidebar Modals (Recent Requests & Notifications) --- */
   function initSidebarModals() {
     const rrModal = $('#recent-requests-modal');
     const rrOpenBtn = $('#btn-recent-requests');
@@ -860,8 +872,83 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (!rrModal && !notifModal) return;
 
-    function populateNotifications() {
-      const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
+    async function populateRecentRequests() {
+      const res = await API.getMyCommissions();
+      const requests = res.success ? res.data : [];
+      const rrBody = rrModal.querySelector('.modal-body');
+
+      if (requests.length === 0) {
+        rrBody.innerHTML = `
+          <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;gap:0.75rem;">
+            <span style="font-size:3rem;opacity:0.5;">📂</span>
+            <p style="color:var(--text-muted);font-size:1rem;">You haven't made any requests yet.</p>
+            <a href="commission.html" class="btn btn-primary" style="margin-top:1rem">Create your first request ✦</a>
+          </div>
+        `;
+      } else {
+        const serviceIcons = {
+          'Graphics Designing': '🎨',
+          'Web Designing': '🌐',
+          'Voice Acting': '🎙️',
+          'Photo & Video Editing': '🎬',
+          'Game Assets Designing': '🎮',
+          'Other': '✦'
+        };
+
+        rrBody.innerHTML = `
+          <div style="display:flex;flex-direction:column;gap:1rem;max-height:58vh;overflow-y:auto;padding-right:4px;">
+            ${requests.map(r => {
+              const icon = serviceIcons[r.service_type] || '✦';
+              const isCompleted = r.status === 'completed';
+              const statusColor = isCompleted ? '#22c55e' : '#f59e0b';
+              const statusBg   = isCompleted ? 'rgba(34,197,94,0.12)' : 'rgba(245,158,11,0.12)';
+              const statusBorder = isCompleted ? 'rgba(34,197,94,0.3)' : 'rgba(245,158,11,0.3)';
+              const statusText = isCompleted ? '✅ Completed' : '🕐 Pending';
+              return `
+              <div style="position:relative;padding:1.25rem 1.25rem 1.25rem 1.6rem;background:rgba(143,125,251,0.06);border:1px solid rgba(143,125,251,0.2);border-radius:14px;overflow:hidden;transition:all 0.25s ease;">
+                <div style="position:absolute;top:0;left:0;width:3px;height:100%;background:linear-gradient(135deg,#8f7dfb,#db8af5);border-radius:3px 0 0 3px;"></div>
+
+                <!-- Header: Service + Badge -->
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:0.75rem;margin-bottom:0.9rem;">
+                  <div style="display:flex;align-items:center;gap:0.6rem;">
+                    <span style="font-size:1.4rem;line-height:1;">${icon}</span>
+                    <span style="font-family:'Outfit',sans-serif;font-weight:700;font-size:0.95rem;color:var(--text-primary);">${escapeHtml(r.service_type || 'Commission Request')}</span>
+                  </div>
+                  <span style="display:inline-flex;align-items:center;gap:0.3rem;padding:0.25rem 0.7rem;border-radius:999px;font-size:0.72rem;font-weight:600;color:${statusColor};background:${statusBg};border:1px solid ${statusBorder};white-space:nowrap;">${statusText}</span>
+                </div>
+
+                <!-- Meta grid: Budget / Deadline / Submitted -->
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:${r.description ? '0.9rem' : '0'};">
+                  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:0.5rem 0.65rem;">
+                    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.2rem;">💰 Budget</div>
+                    <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);">${escapeHtml(r.budget_tier || 'N/A')}</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:0.5rem 0.65rem;">
+                    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.2rem;">📅 Deadline</div>
+                    <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);">${r.deadline ? formatDate(r.deadline) : 'Not set'}</div>
+                  </div>
+                  <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);border-radius:8px;padding:0.5rem 0.65rem;">
+                    <div style="font-size:0.65rem;font-weight:700;text-transform:uppercase;letter-spacing:0.05em;color:var(--text-muted);margin-bottom:0.2rem;">🗓 Submitted</div>
+                    <div style="font-size:0.82rem;font-weight:600;color:var(--text-primary);">${formatDate(r.created_at)}</div>
+                  </div>
+                </div>
+
+                ${r.description ? `
+                <div style="border-top:1px solid rgba(255,255,255,0.06);padding-top:0.75rem;font-size:0.82rem;color:var(--text-muted);line-height:1.6;">
+                  ${escapeHtml(r.description.substring(0, 140))}${r.description.length > 140 ? '…' : ''}
+                </div>` : ''}
+              </div>
+              `;
+            }).join('')}
+          </div>
+          <a href="commission.html" class="btn btn-primary" style="margin-top:1.25rem;width:100%;justify-content:center;font-size:0.9rem;">+ Add New Request</a>
+        `;
+      }
+    }
+
+    async function populateNotifications() {
+      const res = await API.getNotifications();
+      const notifs = res.success ? res.data : [];
       const notifBody = notifModal.querySelector('.modal-body');
       
       if (notifs.length === 0) {
@@ -875,9 +962,9 @@ document.addEventListener('DOMContentLoaded', () => {
         notifBody.innerHTML = `
           <div class="notifications-list" style="display:flex;flex-direction:column;gap:1rem; overflow-y:auto; max-height:60vh; padding-right:5px;">
             ${notifs.map(n => `
-              <div class="notification-item" style="padding: 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); border-left: 3px solid ${n.read ? 'transparent' : 'var(--accent)'}; transition: transform 0.2s ease;">
+              <div class="notification-item" style="padding: 1rem; border-radius: var(--radius-md); background: rgba(255,255,255,0.05); border-left: 3px solid transparent; transition: transform 0.2s ease;">
                 <p style="margin-bottom:0.5rem; color: #fff; font-size: 0.95rem;">${escapeHtml(n.message)}</p>
-                <small style="color:var(--text-muted); font-size: 0.8rem;">${formatDate(n.date)}</small>
+                <small style="color:var(--text-muted); font-size: 0.8rem;">${formatDate(n.created_at)}</small>
               </div>
             `).join('')}
           </div>
@@ -885,17 +972,19 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         
         const clearBtn = document.getElementById('clear-notifs-btn');
-        if (clearBtn) clearBtn.addEventListener('click', () => {
-          localStorage.removeItem('commissionhub_notifications');
+        if (clearBtn) clearBtn.addEventListener('click', async () => {
+          await API.clearNotifications();
           populateNotifications();
           updateNotificationBadge();
         });
       }
     }
 
-    function updateNotificationBadge() {
-      const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
-      const unreadCount = notifs.filter(n => !n.read).length;
+    async function updateNotificationBadge() {
+      const res = await API.getNotifications();
+      const notifs = res.success ? res.data : [];
+      // No read status in DB yet, but we'll show count if any exist
+      const unreadCount = notifs.length;
       if (!notifOpenBtn) return;
       
       let badge = notifOpenBtn.querySelector('.notif-badge');
@@ -916,15 +1005,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     updateNotificationBadge();
 
-    const openM = (modal) => {
+    const openM = async (modal) => {
       if (!modal) return;
       if (modal === notifModal) {
-         populateNotifications();
-         // Mark all as read
-         const notifs = JSON.parse(localStorage.getItem('commissionhub_notifications') || '[]');
-         notifs.forEach(n => n.read = true);
-         localStorage.setItem('commissionhub_notifications', JSON.stringify(notifs));
-         updateNotificationBadge();
+         await populateNotifications();
+         // No read status in DB yet, we just show them
+         await updateNotificationBadge();
+      }
+      if (modal === rrModal) {
+         await populateRecentRequests();
       }
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
@@ -952,25 +1041,20 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  const path = window.location.pathname;
-  if (path.includes('admin')) {
+  if ($('#admin-dashboard-view')) {
     initAdminPage();
   } else {
     initClientPage();
     initSidebarModals();
-    initServicesCarousel(); // Initialize the new carousel
+    initServicesCarousel();
     
-    // Sidebar Logout
-    $('#btn-sidebar-logout')?.addEventListener('click', () => {
-      clearSession();
+    $('#btn-sidebar-logout')?.addEventListener('click', async () => {
+      await API.logout();
       window.location.href = 'index.html';
     });
   }
 });
 
-/* ===========================
-   SERVICES CAROUSEL LOGIC
-   =========================== */
 function initServicesCarousel() {
   const track = $('#services-track');
   const wrapper = $('.services-carousel-wrapper');
@@ -979,14 +1063,12 @@ function initServicesCarousel() {
   const originalCards = Array.from(track.children);
   if (originalCards.length === 0) return;
 
-  // 1. Prepare original cards and ensure they are visible
   originalCards.forEach(card => {
     card.classList.remove('animate-on-scroll', 'visible');
     card.style.opacity = '1';
     card.style.transform = 'none';
   });
 
-  // 2. Triple the cards for smooth infinite look
   originalCards.forEach(card => {
     const clone = card.cloneNode(true);
     track.appendChild(clone);
@@ -999,9 +1081,8 @@ function initServicesCarousel() {
   let scrollPos = 0;
   let isPaused = false;
   let animationId = null;
-  const speed = 0.8; // Pixels per frame
+  const speed = 0.8;
 
-  // Calculate width of exactly one set of cards (including gaps)
   const getOneSetWidth = () => {
     return track.scrollWidth / 3;
   };
@@ -1031,7 +1112,6 @@ function initServicesCarousel() {
     animationId = requestAnimationFrame(step);
   }
 
-  // Start the engine after a small delay to ensure layout
   setTimeout(startCarousel, 200);
 
   track.addEventListener('click', (e) => {
@@ -1049,7 +1129,6 @@ function initServicesCarousel() {
     isPaused = true;
     cancelAnimationFrame(animationId);
 
-    // Calculate current offset to snap perfectly from current position
     const cardRect = card.getBoundingClientRect();
     const wrapperRect = wrapper.getBoundingClientRect();
     const cardCenter = cardRect.left + cardRect.width / 2;
@@ -1071,7 +1150,6 @@ function initServicesCarousel() {
     
     $$('.service-card').forEach(c => c.classList.remove('active-card'));
 
-    // Wait for transition to finish before restarting loop
     setTimeout(() => {
       track.style.transition = 'none';
       isPaused = false;
@@ -1079,7 +1157,6 @@ function initServicesCarousel() {
     }, 500);
   }
 
-  // Resume on background click
   wrapper.addEventListener('click', (e) => {
     if (e.target === wrapper || e.target === track) {
       resumeCarousel();

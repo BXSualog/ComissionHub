@@ -1,30 +1,13 @@
-/* =========================================
-   COMMISSIONHUB – COMMISSION PAGE SCRIPT
-   ========================================= */
-
 'use strict';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Common utilities (assuming they are in script.js and exposed or we redefine what we need)
-  // For safety in this demo, let's redefine or ensure they exist.
   const $ = (sel) => document.querySelector(sel);
   const $$ = (sel) => Array.from(document.querySelectorAll(sel));
 
-  const STORAGE_KEY = 'commissionhub_requests';
-  const SESSION_KEY = 'commissionhub_session';
 
-  function getRequests() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
-    catch { return []; }
-  }
-
-  function saveRequests(list) {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
-  }
-
-  function getSession() {
-    try { return JSON.parse(sessionStorage.getItem(SESSION_KEY)); }
-    catch { return null; }
+  async function getSession() {
+    const res = await API.getSession();
+    return res.success ? res.user : null;
   }
 
   function uid() {
@@ -41,12 +24,14 @@ document.addEventListener('DOMContentLoaded', () => {
     group.classList.toggle('has-error', show);
   }
 
-  // Pre-fill form if logged in
-  const session = getSession();
-  if (session) {
-    if ($('#req-name')) $('#req-name').value = session.name || '';
-    if ($('#req-email')) $('#req-email').value = session.email || '';
-  }
+  // Check session and pre-fill form
+  (async () => {
+    const session = await getSession();
+    if (session) {
+      if ($('#req-name')) $('#req-name').value = session.name || '';
+      if ($('#req-email')) $('#req-email').value = session.email || '';
+    }
+  })();
 
   const CATEGORY_PRICING = {
       "Voice Acting": [
@@ -79,7 +64,6 @@ document.addEventListener('DOMContentLoaded', () => {
       ]
   };
 
-  // Dynamic Form Field Visibility
   const reqService = $('#req-service');
   const reqPayment = $('#req-payment');
   const reqBudget = $('#req-budget');
@@ -90,7 +74,6 @@ document.addEventListener('DOMContentLoaded', () => {
     reqService.addEventListener('change', (e) => {
       if (e.target.value) {
         fgPayment.style.display = 'flex';
-        // Populate budgets based on service
         const category = e.target.value;
         const tiers = CATEGORY_PRICING[category] || CATEGORY_PRICING["Other"];
         if (reqBudget) {
@@ -122,12 +105,21 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  /* --- Commission Form Handling --- */
   const commissionForm = $('#commission-form');
   if (commissionForm) {
-    commissionForm.addEventListener('submit', (e) => {
+    commissionForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
+      const session = await getSession();
+      if (!session) {
+        if (typeof showToast === 'function') {
+          showToast('Please sign in to submit a request.', 'error');
+        } else {
+          alert('Please sign in to submit a request.');
+        }
+        return;
+      }
+
       const name    = $('#req-name')?.value.trim();
       const email   = $('#req-email')?.value.trim();
       const service = $('#req-service')?.value;
@@ -144,7 +136,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (!payment)           { setError('fg-payment', true); valid = false; } else setError('fg-payment', false);
       if (!budget)            { setError('fg-budget', true); valid = false; } else setError('fg-budget', false);
       
-      // Optional fields can be empty, but date should be valid if provided
       if (deadline && isNaN(new Date(deadline).getTime())) {
         setError('fg-deadline', true); valid = false;
       } else {
@@ -162,36 +153,41 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      const request = {
-        id: uid(),
-        name, email, service, payment, budget, deadline, details,
-        status: 'pending',
-        date: new Date().toISOString(),
-      };
-
-      const requests = getRequests();
-      requests.unshift(request);
-      saveRequests(requests);
-
-      commissionForm.reset();
-      
-      if (typeof showToast === 'function') {
-        showToast('Commission request submitted! 🎉 I\'ll be in touch shortly.', 'success', 5000);
-      } else {
-        alert('Commission request submitted! 🎉');
+      // Extract amount from budget string like "Silver Tier (₱1,500)"
+      let amount = 0;
+      const amountMatch = budget.match(/₱([\d,]+)/);
+      if (amountMatch) {
+        amount = parseFloat(amountMatch[1].replace(/,/g, ''));
       }
 
-      // Redirect after a short delay
-      setTimeout(() => {
-        window.location.href = 'dashboard.html';
-      }, 2000);
+      const requestData = {
+        id: uid(),
+        name, email, service, payment, budget, amount, deadline, details
+      };
+
+      const res = await API.createCommission(requestData);
+
+      if (res.success) {
+        commissionForm.reset();
+        if (typeof showToast === 'function') {
+          showToast('Commission request submitted! 🎉 I\'ll be in touch shortly.', 'success', 5000);
+        } else {
+          alert('Commission request submitted! 🎉');
+        }
+        setTimeout(() => {
+          window.location.href = 'dashboard.html';
+        }, 2000);
+      } else {
+        if (typeof showToast === 'function') {
+          showToast(res.message || 'Submission failed.', 'error');
+        } else {
+          alert(res.message || 'Submission failed.');
+        }
+      }
     });
   }
 });
 
-/* =========================================
-   FILE UPLOAD LOGIC
-   ========================================= */
 document.addEventListener('DOMContentLoaded', function() {
   const dropArea = document.getElementById('drop-area');
   const fileInput = document.getElementById('fileUpload');
@@ -199,19 +195,15 @@ document.addEventListener('DOMContentLoaded', function() {
   
   if (!dropArea || !fileInput || !previewArea) return;
 
-  // Max file size in bytes (10MB)
   const MAX_FILE_SIZE = 10 * 1024 * 1024;
   
-  // Allowed file types
   const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'video/mp4'];
   
-  // Prevent default drag behaviors
   ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
     dropArea.addEventListener(eventName, preventDefaults, false);
     document.body.addEventListener(eventName, preventDefaults, false);
   });
   
-  // Highlight drop area when item is dragged over it
   ['dragenter', 'dragover'].forEach(eventName => {
     dropArea.addEventListener(eventName, highlight, false);
   });
@@ -220,10 +212,8 @@ document.addEventListener('DOMContentLoaded', function() {
     dropArea.addEventListener(eventName, unhighlight, false);
   });
   
-  // Handle dropped files
   dropArea.addEventListener('drop', handleDrop, false);
   
-  // Handle files from input field
   fileInput.addEventListener('change', function() {
     handleFiles(this.files);
   });
@@ -253,26 +243,19 @@ document.addEventListener('DOMContentLoaded', function() {
     
     if (filesArray.length === 0) return;
     
-    // Process each file
     filesArray.forEach(file => {
-      // Validate file type and size
       if (!validateFile(file)) return;
       
-      // Create preview item
       const uploadItem = createUploadItem(file);
       previewArea.appendChild(uploadItem);
       
-      // Simulate upload
       simulateUpload(uploadItem, file);
     });
     
-    // Clear the input field to allow selecting the same file again
     fileInput.value = '';
   }
   
   function validateFile(file) {
-    // Check file type (allowing all listed formats and fonts conceptually if needed)
-    // The snippet allows some types, for 'Fonts' the user specifically asked for it in the UI
     const isFont = file.name.match(/\.(ttf|otf|woff|woff2)$/i);
     
     if (!ALLOWED_TYPES.includes(file.type) && !isFont && !file.type.startsWith('image/') && !file.type.startsWith('video/')) {
@@ -280,7 +263,6 @@ document.addEventListener('DOMContentLoaded', function() {
       return false;
     }
     
-    // Check file size
     if (file.size > MAX_FILE_SIZE) {
       alert(`File too large: ${file.name} (${formatFileSize(file.size)})`);
       return false;
@@ -316,7 +298,6 @@ document.addEventListener('DOMContentLoaded', function() {
       </div>
     `;
     
-    // Add event listener to remove button
     item.querySelector('.upload-item-remove').addEventListener('click', function() {
       item.remove();
     });
@@ -329,14 +310,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const statusIcon = item.querySelector('.upload-item-status i');
     let progress = 0;
     
-    // Simulate upload progress
     const interval = setInterval(() => {
       progress += Math.random() * 10;
       if (progress >= 100) {
         progress = 100;
         clearInterval(interval);
         
-        // Update status icon
         statusIcon.className = 'fas fa-check';
         statusIcon.style.color = 'var(--upload-item-icon)';
       }

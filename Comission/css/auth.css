@@ -17,53 +17,53 @@
 }
 
 .modal-header {
-  padding: 2rem 2rem 0.5rem !important;
+  padding: 1.5rem 1.8rem 0.4rem !important;
   border-bottom: none !important;
 }
 
 .modal-header h3 {
   font-family: 'Outfit', sans-serif !important;
-  font-size: 1.8rem !important;
+  font-size: 1.6rem !important;
   font-weight: 800 !important;
   letter-spacing: -0.02em !important;
 }
 
 .modal-close {
   background: rgba(255, 255, 255, 0.05) !important;
-  width: 34px !important;
-  height: 34px !important;
-  top: 1.8rem !important;
-  right: 1.8rem !important;
+  width: 32px !important;
+  height: 32px !important;
+  top: 1.5rem !important;
+  right: 1.5rem !important;
 }
 
 .modal-body {
-  padding: 1.5rem 2rem 2.5rem !important;
+  padding: 1.2rem 1.8rem 1.8rem !important;
 }
 
 /* Form Balancing */
 .form-group {
-  margin-bottom: 1.5rem !important;
+  margin-bottom: 1rem !important;
 }
 
 .form-label {
-  font-size: 0.88rem !important;
+  font-size: 0.85rem !important;
   font-weight: 600 !important;
-  margin-bottom: 0.6rem !important;
+  margin-bottom: 0.4rem !important;
   display: block !important;
   opacity: 0.9 !important;
 }
 
 .btn-primary.btn-full {
-  margin-top: 0.8rem !important;
-  padding: 0.9rem !important;
-  font-size: 1rem !important;
-  border-radius: 14px !important;
+  margin-top: 0.6rem !important;
+  padding: 0.85rem !important;
+  font-size: 0.95rem !important;
+  border-radius: 12px !important;
 }
 
 /* Social Login Balancing */
 .divider {
-  margin: 2rem 0 !important;
-  font-size: 0.85rem !important;
+  margin: 1.2rem 0 !important;
+  font-size: 0.8rem !important;
   font-weight: 500 !important;
   color: var(--text-muted) !important;
 }
@@ -83,6 +83,6 @@
 }
 
 .auth-switch {
-  margin-top: 1.8rem !important;
-  font-size: 0.9rem !important;
+  margin-top: 1.2rem !important;
+  font-size: 0.85rem !important;
 }

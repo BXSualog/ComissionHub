@@ -473,7 +473,7 @@
 
   <!-- ===================== RECENT REQUESTS MODAL ===================== -->
   <div class="modal-overlay" id="recent-requests-modal" role="dialog" aria-modal="true" aria-labelledby="rr-modal-heading">
-    <div class="modal">
+    <div class="modal" style="max-width:480px;width:95%;">
       <div class="modal-header">
         <h3 id="rr-modal-heading"><i class="fa-solid fa-clock-rotate-left" style="margin-right:.5rem;color:var(--accent)"></i>Recent Requests</h3>
         <button class="modal-close" id="rr-modal-close" aria-label="Close">✕</button>
@@ -490,7 +490,7 @@
 
   <!-- ===================== NOTIFICATIONS MODAL ===================== -->
   <div class="modal-overlay" id="notifications-modal" role="dialog" aria-modal="true" aria-labelledby="notif-modal-heading">
-    <div class="modal">
+    <div class="modal" style="max-width:480px;width:95%;">
       <div class="modal-header">
         <h3 id="notif-modal-heading"><i class="fa-solid fa-bell" style="margin-right:.5rem;color:var(--accent)"></i>Notifications</h3>
         <button class="modal-close" id="notif-modal-close" aria-label="Close">✕</button>
@@ -511,6 +511,7 @@
     <div id="lightbox-caption" class="lightbox-caption"></div>
   </div>
 
+  <script src="js/api_client.js"></script>
   <script src="js/script.js"></script>
   <script src="js/dashboard.js"></script>
 </body>

@@ -1,46 +1,25 @@
-/**
- * dashboard.js
- * Dedicated logic for the client dashboard
- */
-
 'use strict';
 
-document.addEventListener('DOMContentLoaded', () => {
-    // Shared Utils (Assuming script.js is loaded before this)
+document.addEventListener('DOMContentLoaded', async () => {
     const $ = (sel, ctx = document) => ctx.querySelector(sel);
     const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-    /* --- Auth Check & Session Handling --- */
-    function getSession() {
-        try { return JSON.parse(sessionStorage.getItem('commissionhub_session')); }
-        catch { return null; }
-    }
+    const res = await API.getSession();
+    const session = res.success ? res.user : null;
 
-    function clearSession() {
-        sessionStorage.removeItem('commissionhub_session');
-    }
-
-    const session = getSession();
-    if (!session) {
-        // Redirection logic if not logged in
-        // (Handled by script.js modal trigger usually, but here we can force redirect if needed)
-    } else {
-        // Set client name in greeting
+    if (session) {
         const greetingName = $('.greeting-title .gradient-text');
         if (greetingName) {
             greetingName.textContent = session.name || 'Client';
         }
     }
 
-
-    /* --- Custom Smooth Scroll Animation --- */
     function animateScroll(element, target, duration = 600) {
         const start = element.scrollLeft;
         const change = target - start;
         let currentTime = 0;
         const increment = 16;
 
-        // Disable snapping during animation to prevent "jumping" or "instant" snaps
         element.style.scrollSnapType = 'none';
 
         const easeInOutQuart = (t, b, c, d) => {
@@ -58,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 requestAnimationFrame(animate);
             } else {
                 element.scrollLeft = target;
-                // Re-enable snapping after animation completes
                 element.style.scrollSnapType = 'x mandatory';
             }
         };
@@ -66,7 +44,6 @@ document.addEventListener('DOMContentLoaded', () => {
         requestAnimationFrame(animate);
     }
 
-    /* --- Free Swipe Carousel Logic --- */
     function initCarousels() {
         const containers = $$('.carousel-container');
         containers.forEach(container => {
@@ -96,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    /* --- Lightbox Logic --- */
     function initLightbox() {
         const modal = $('#lightbox-modal');
         const img = $('#lightbox-img');
@@ -128,13 +104,11 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.target === modal) closeModal();
         });
 
-        // Close on ESC
         window.addEventListener('keydown', (e) => {
             if (e.key === 'Escape') closeModal();
         });
     }
 
-    /* --- Pricing Modal Data & Logic --- */
     const CATEGORY_PRICING = {
         "Voice Acting": [
             { tier: "Silver Tier", price: "₱1,500", features: ["Up to 100 words", "1 Revision", "High-Quality MP3", "48h Delivery"] },

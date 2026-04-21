@@ -63,6 +63,8 @@
   font-weight: 500;
   color: var(--text-secondary);
   cursor: pointer;
+  user-select: none;
+  outline: none;
   transition: all var(--transition);
 }
 
@@ -70,6 +72,10 @@
 .sidebar-nav-item.active {
   background: var(--accent-glow);
   color: var(--accent);
+}
+
+.sidebar-nav-item * {
+  pointer-events: none;
 }
 
 .sidebar-nav-item .nav-icon { font-size: 1.1rem; }
@@ -274,10 +280,20 @@ tbody td {
   vertical-align: middle;
 }
 
-.td-name { font-weight: 600; color: var(--text-primary); }
-.td-email { font-size: 0.82rem; color: var(--text-muted); }
-.td-clickable { cursor: pointer; transition: background var(--transition); }
-.td-clickable:hover { background: var(--accent-glow); }
+.td-name { 
+  display: block;
+  font-weight: 700; 
+  color: var(--text-primary); 
+  margin-bottom: 2px;
+}
+.td-email { 
+  display: block;
+  font-size: 0.82rem; 
+  color: var(--text-muted); 
+}
+.td-clickable { cursor: pointer; transition: all var(--transition); }
+.td-clickable:hover { background: var(--accent-glow) !important; }
+.td-client-cell:hover .td-name { color: var(--accent) !important; }
 .td-actions { display: flex; align-items: center; gap: 0.5rem; }
 
 .empty-state {
@@ -612,4 +628,41 @@ tbody td {
 .td-amount {
   font-weight: 700;
   color: var(--success);
+}
+/* --- User Management Action Buttons --- */
+.btn-edit-user.btn-warning {
+  background: #facc15;
+  color: #1a1d2e;
+  border: 1.5px solid #eab308;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 700;
+}
+
+.btn-edit-user.btn-warning:hover {
+  background: #eab308;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(234, 179, 8, 0.3);
+}
+
+.btn-delete-user.btn-danger {
+  background: #ef4444;
+  color: #fff;
+  border: 1.5px solid #dc2626;
+  border-radius: var(--radius-sm) !important;
+  font-weight: 700;
+}
+
+.btn-delete-user.btn-danger:hover {
+  background: #dc2626;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
+.td-actions .btn {
+  padding: 0.4rem 1.2rem;
+  height: auto;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
