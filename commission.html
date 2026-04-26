@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request a Commission – CommissionHub</title>
+  <meta name="description" content="Submit your commission request and bring your vision to life." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/commission.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+<body class="has-sidebar">
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen">
+    <div class="loader-logo">CommissionHub</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST CONTAINER ===================== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="dashboard.html" class="nav-logo">✦ CommissionHub</a>
+
+      <ul class="nav-links">
+      </ul>
+
+      <div class="nav-actions">
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ===================== SIDEBAR ===================== -->
+  <div id="sidebar" class="discord-sidebar">
+    <div class="sidebar-tooltip-wrap">
+      <a href="dashboard.html" class="discord-logo-btn" aria-label="CommissionHub Home">
+        <img src="assets/logo-icon.png" alt="CommissionHub Logo" class="discord-logo" />
+      </a>
+      <span class="sidebar-tooltip">Home</span>
+    </div>
+    <div class="discord-separator"></div>
+    <div class="sidebar-tooltip-wrap">
+      <a href="commission.html" class="discord-add-btn active" aria-label="Add Request">
+        <i class="fa-solid fa-plus"></i>
+      </a>
+      <span class="sidebar-tooltip">Add Request</span>
+    </div>
+    <div class="sidebar-tooltip-wrap">
+      <button class="discord-add-btn" id="btn-recent-requests" aria-label="Recent Requests">
+        <i class="fa-solid fa-clock-rotate-left"></i>
+      </button>
+      <span class="sidebar-tooltip">Recent Requests</span>
+    </div>
+    <div class="sidebar-tooltip-wrap">
+      <button class="discord-add-btn" id="btn-notifications" aria-label="Notifications">
+        <i class="fa-solid fa-bell"></i>
+      </button>
+      <span class="sidebar-tooltip">Notifications</span>
+    </div>
+
+    <div class="sidebar-footer">
+
+      <div class="sidebar-tooltip-wrap">
+        <button class="discord-logout-btn" id="btn-sidebar-logout" aria-label="Sign Out">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
+        <span class="sidebar-tooltip">Sign Out</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+  </div>
+
+  <!-- ===================== COMMISSION PAGE CONTENT ===================== -->
+  <section id="commission-page" class="commission-section">
+    <div class="hero-bg">
+      <div class="hero-orb commission-orb orb-primary"></div>
+      <div class="hero-orb commission-orb orb-secondary"></div>
+    </div>
+    
+    <div class="container commission-container">
+      <div class="back-nav">
+        <a href="dashboard.html" class="btn-back"><i class="fa-solid fa-arrow-left"></i> Back to Dashboard</a>
+      </div>
+
+      <div class="commission-form-area animate-on-scroll">
+        <div class="glass-form-panel">
+          <div class="form-header-center">
+            <h1 class="hero-title form-title-center">Request a <span class="gradient-text">Commission</span></h1>
+            <p class="section-subtitle form-subtitle-center">
+              Fill in the details below and I'll get back to you as soon as possible.
+            </p>
+          </div>
+
+          <form id="commission-form" novalidate>
+            <div class="commission-inner-form-grid">
+              <div class="form-group" id="fg-name">
+                <label class="form-label" for="req-name">Full Name *</label>
+                <input class="form-control" type="text" id="req-name" name="name" placeholder="Your full name" autocomplete="name" />
+                <span class="form-error">Please enter your full name.</span>
+              </div>
+              <div class="form-group" id="fg-email">
+                <label class="form-label" for="req-email">Email Address *</label>
+                <input class="form-control" type="email" id="req-email" name="email" placeholder="you@example.com" autocomplete="email" />
+                <span class="form-error">Please enter a valid email.</span>
+              </div>
+              <div class="form-group full" id="fg-service">
+                <label class="form-label" for="req-service">Service Type *</label>
+                <select class="form-control form-input-dark" id="req-service" name="service">
+                  <option value="">— Select a service —</option>
+                  <option value="Graphics Designing">Graphics Designing</option>
+                  <option value="Web Designing">Web Designing</option>
+                  <option value="Voice Acting">Voice Acting</option>
+                  <option value="Photo & Video Editing">Photo &amp; Video Editing</option>
+                  <option value="Game Assets Designing">Game Assets Designing</option>
+                  <option value="Other">Other</option>
+                </select>
+                <span class="form-error">Please select a service type.</span>
+              </div>
+              <div class="form-group full" id="fg-payment" style="display: none;">
+                <label class="form-label" for="req-payment">Payment Method *</label>
+                <select class="form-control form-input-dark" id="req-payment" name="payment">
+                  <option value="">— Select a payment method —</option>
+                  <option value="GCash">GCash</option>
+                  <option value="Maya">Maya</option>
+                  <option value="PalawanPay">PalawanPay</option>
+                </select>
+                <span class="form-error">Please select a payment method.</span>
+              </div>
+              <div class="form-group full" id="fg-budget" style="display: none;">
+                <label class="form-label" for="req-budget">Budget Range / Tier *</label>
+                <select class="form-control form-input-dark" id="req-budget" name="budget">
+                  <option value="">— Select a tier —</option>
+                  <!-- Populated dynamically based on service -->
+                </select>
+                <span class="form-error">Please select a budget range.</span>
+              </div>
+              <div class="form-group full" id="fg-deadline">
+                <label class="form-label" for="req-deadline">Project Deadline <span style="font-size: 0.85em; opacity: 0.7; font-weight: normal;">(Optional)</span></label>
+                <input class="form-control form-input-dark" type="date" id="req-deadline" name="deadline" />
+                <span class="form-error">Please select a valid date.</span>
+              </div>
+              <div class="form-group full" id="fg-details">
+                <label class="form-label" for="req-details">Project Details *</label>
+                <textarea class="form-control form-input-dark" id="req-details" name="details" placeholder="Describe your project in as much detail as possible — style, references, deadline, any special requirements..." rows="6"></textarea>
+                <span class="form-error">Please describe your project (min. 20 characters).</span>
+              </div>
+              
+              <div class="form-group full" id="fg-upload">
+                <div class="file-upload-container">
+                  <div class="file-upload-area" id="drop-area">
+                    <div class="file-upload-message">
+                      <i class="fas fa-cloud-upload-alt"></i>
+                      <h3>Drag & Drop Files Here <span style="font-size: 0.7em; opacity: 0.7; font-weight: normal; display: block; margin-top: 0.2rem;">(Optional)</span></h3>
+                      <p>or</p>
+                      <label for="fileUpload" class="file-upload-btn">Browse Files</label>
+                      <input type="file" id="fileUpload" multiple hidden>
+                      <p class="file-upload-info">Supports: JPG, PNG, PDF, DOC, MP4 (Max: 10MB) <span class="badge"><i class="fas fa-plus-circle"></i> Fonts</span></p>
+                    </div>
+                    <div class="file-upload-preview" id="previewArea"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button type="submit" class="btn btn-primary btn-full form-submit-btn" id="submit-btn">
+              Send Commission Request ✦
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">✦ CommissionHub</span>
+        <p class="footer-copy">© 2026 CommissionHub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Re-using script.js for core things, and commission.js for form logic -->
+  <!-- ===================== RECENT REQUESTS MODAL ===================== -->
+  <div class="modal-overlay" id="recent-requests-modal" role="dialog" aria-modal="true" aria-labelledby="rr-modal-heading">
+    <div class="modal" style="max-width:480px;width:95%;">
+      <div class="modal-header">
+        <h3 id="rr-modal-heading"><i class="fa-solid fa-clock-rotate-left" style="margin-right:.5rem;color:var(--accent)"></i>Recent Requests</h3>
+        <button class="modal-close" id="rr-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="rr-empty-state">
+          <i class="fa-solid fa-folder-open rr-empty-icon"></i>
+          <p>You haven't made any requests yet.</p>
+          <a href="commission.html" class="btn btn-primary" style="margin-top:1rem">Create your first request ✦</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== NOTIFICATIONS MODAL ===================== -->
+  <div class="modal-overlay" id="notifications-modal" role="dialog" aria-modal="true" aria-labelledby="notif-modal-heading">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="notif-modal-heading"><i class="fa-solid fa-bell" style="margin-right:.5rem;color:var(--accent)"></i>Notifications</h3>
+        <button class="modal-close" id="notif-modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div class="rr-empty-state">
+          <i class="fa-solid fa-bell-slash rr-empty-icon" style="opacity: 0.5;"></i>
+          <p>You have no new notifications.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api_client.js"></script>
+  <script src="js/script.js"></script>
+  <script src="js/commission.js"></script>
+</body>
+</html>
