@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CommissionHub – Creative Services on Demand</title>
+  <meta name="description"
+    content="Get high-quality creative commissions tailored to your vision. Illustrations, music, writing, and more." />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/carousel.css" />
+  <link rel="stylesheet" href="css/hero.css" />
+  <link rel="stylesheet" href="css/auth.css" />
+  <link rel="stylesheet" href="css/payment.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+
+  <!-- ===================== LOADING SCREEN ===================== -->
+  <div id="loading-screen">
+    <div class="loader-logo">CommissionHub</div>
+    <div class="loader-bar-wrap">
+      <div class="loader-bar"></div>
+    </div>
+  </div>
+
+  <!-- ===================== TOAST CONTAINER ===================== -->
+  <div id="toast-container" aria-live="polite"></div>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a href="#" class="nav-logo">✦ CommissionHub</a>
+
+      <ul class="nav-links">
+      </ul>
+
+      <div class="nav-actions">
+
+        <button class="btn btn-secondary" id="btn-login">Sign In</button>
+        <button class="btn btn-primary" id="btn-signup">Get Started</button>
+        <button class="nav-hamburger" id="nav-hamburger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- Mobile Menu -->
+  <div class="mobile-menu" id="mobile-menu">
+    <a href="#" id="mobile-login">Sign In</a>
+  </div>
+
+  <!-- ===================== HERO SECTION ===================== -->
+  <section id="hero">
+    <div class="hero-bg">
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <div class="hero-orb hero-orb-3"></div>
+    </div>
+    <div class="container hero-container">
+      <div class="hero-inner">
+        <div class="hero-content">
+          <div class="hero-tag">
+            <span></span>
+            Open for Commissions
+          </div>
+          <h1 class="hero-title">
+            Bring Your Vision<br />
+            <span class="gradient-text">to Life</span>
+          </h1>
+          <p class="hero-desc">
+            High-quality visuals and audio, built to your specs and delivered when you need them. No fluff, just great
+            work.
+          </p>
+          <div class="hero-actions">
+            <a href="#" id="btn-go-dashboard" class="btn btn-primary">Go to Dashboard ↗</a>
+            <a href="#services" class="btn btn-secondary btn-view-services" id="btn-view-services">View Services ↓</a>
+          </div>
+        </div>
+
+        <div class="hero-image-wrap">
+          <img src="assets/LandingPage/hero_illustration_vibe.png" alt="Creative Commission Illustration" class="hero-image" />
+          <div class="hero-image-glow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SERVICES SECTION ===================== -->
+  <section id="services">
+    <div class="container">
+      <h2 class="carousel-section-title animate-on-scroll">What We Offer</h2>
+      <p class="section-subtitle animate-on-scroll delay-1" style="text-align: left; margin: -1.5rem 0 3rem 0; max-width: 100%;">
+        A curated range of creative services crafted with passion and precision.
+      </p>
+      <div class="services-carousel-wrapper">
+        <div class="services-grid" id="services-track">
+
+          <div class="service-card animate-on-scroll delay-1">
+            <div class="service-icon"><i class="fa-solid fa-palette"></i></div>
+            <h3 class="service-title">Graphics Designing</h3>
+            <p class="service-desc">Eye-catching posters, social media graphics, banners, and visual content tailored to
+              your brand.</p>
+            <span class="service-price">Starting at ₱1,000</span>
+          </div>
+
+          <div class="service-card animate-on-scroll delay-2">
+            <div class="service-icon"><i class="fa-solid fa-globe"></i></div>
+            <h3 class="service-title">Web Designing</h3>
+            <p class="service-desc">Modern, responsive website designs including landing pages, portfolios, and full UI
+              mockups.</p>
+            <span class="service-price">Starting at ₱4,000</span>
+          </div>
+
+          <div class="service-card animate-on-scroll delay-3">
+            <div class="service-icon"><i class="fa-solid fa-microphone-lines"></i></div>
+            <h3 class="service-title">Voice Acting</h3>
+            <p class="service-desc">Professional voice-over work for games, animations, videos, and character narration.
+            </p>
+            <span class="service-price">Starting at ₱1,500</span>
+          </div>
+
+          <div class="service-card animate-on-scroll delay-4">
+            <div class="service-icon"><i class="fa-solid fa-clapperboard"></i></div>
+            <h3 class="service-title">Photo & Video Editing</h3>
+            <p class="service-desc">High-quality photo retouching, color grading, video cuts, and cinematic
+              post-production edits.</p>
+            <span class="service-price">Starting at ₱1,250</span>
+          </div>
+
+          <div class="service-card animate-on-scroll delay-1">
+            <div class="service-icon"><i class="fa-solid fa-gamepad"></i></div>
+            <h3 class="service-title">Game Assets Designing</h3>
+            <p class="service-desc">Custom sprites, tilesets, UI elements, icons, and complete visual asset packs for your
+              game.</p>
+            <span class="service-price">Starting at ₱1,750</span>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== PAYMENT METHODS SECTION ===================== -->
+  <section id="payments">
+    <div class="container">
+      <div class="payment-wrapper">
+        <h2 class="section-title animate-on-scroll">Payment Methods</h2>
+        <p class="section-subtitle animate-on-scroll delay-1">
+          We support seamless and secure transactions through multiple local platforms.
+        </p>
+
+        <div class="payment-grid">
+          <!-- GCash -->
+          <div class="payment-card gcash animate-on-scroll delay-1">
+            <div class="payment-logo-wrap">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-icon-img">
+                <path d="M60 15 A 40 40 0 1 0 60 85" stroke="#007DF1" stroke-width="12" stroke-linecap="round"/>
+                <path d="M55 30 A 22 22 0 1 0 55 70 A 22 22 0 0 0 77 50 H 50" stroke="#0035A0" stroke-width="12" stroke-linecap="round"/>
+                <path d="M 75 35 A 25 25 0 0 1 75 65" stroke="#3FC0FF" stroke-width="10" stroke-linecap="round"/>
+                <path d="M 88 25 A 38 38 0 0 1 88 75" stroke="#3FC0FF" stroke-width="10" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="payment-title">GCash</h3>
+            <p class="payment-desc"></p>
+          </div>
+
+          <!-- Maya -->
+          <div class="payment-card maya animate-on-scroll delay-2">
+            <div class="payment-logo-wrap">
+              <svg viewBox="0 0 100 40" xmlns="http://www.w3.org/2000/svg" class="payment-icon-img">
+                <text x="50" y="30" font-family="'Outfit', sans-serif" font-weight="800" font-size="42" fill="#00E962" text-anchor="middle" letter-spacing="-2">maya</text>
+              </svg>
+            </div>
+            <h3 class="payment-title">Maya</h3>
+            <p class="payment-desc"></p>
+          </div>
+
+          <!-- Palawan Pay -->
+          <div class="payment-card palawan animate-on-scroll delay-3">
+            <div class="payment-logo-wrap">
+              <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg" class="payment-icon-img">
+                <path d="M 15 15 H 70 A 35 35 0 0 1 70 85 H 50 L 40 98 M 43 85 H 45" stroke="#ECAE00" stroke-width="4" stroke-linecap="round"/>
+                <path d="M 40 85 L 50 30 H 65 A 18 18 0 0 1 65 66 H 45" stroke="#006c3a" stroke-width="14" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="62" cy="48" r="7" fill="#ECAE00"/>
+                <circle cx="43" cy="35" r="4" fill="#006c3a"/>
+                <path d="M 32 48 A 18 18 0 0 1 35 22" stroke="#006c3a" stroke-width="5" stroke-linecap="round"/>
+                <path d="M 22 58 A 30 30 0 0 1 27 12" stroke="#006c3a" stroke-width="5" stroke-linecap="round"/>
+              </svg>
+            </div>
+            <h3 class="payment-title">PalawanPay</h3>
+            <p class="payment-desc"></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== COMMISSION FORM MOVED TO DASHBOARD ===================== -->
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div class="container">
+      <div class="footer-inner">
+        <span class="footer-logo">✦ CommissionHub</span>
+        <p class="footer-copy">© 2026 CommissionHub. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===================== AUTH MODAL ===================== -->
+  <div class="modal-overlay" id="auth-modal" role="dialog" aria-modal="true" aria-labelledby="modal-heading">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="modal-heading">Welcome Back</h3>
+        <button class="modal-close" id="modal-close" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <!-- Login Form -->
+        <div id="login-panel">
+          <div class="form-group" id="fg-login-email">
+            <label class="form-label" for="login-email">Email Address</label>
+            <input class="form-control" type="email" id="login-email" placeholder="you@example.com" />
+            <span class="form-error">Please enter a valid email.</span>
+          </div>
+          <div class="form-group" id="fg-login-pw">
+            <label class="form-label" for="login-password">Password</label>
+            <div class="password-wrapper">
+              <input class="form-control" type="password" id="login-password" placeholder="Your password" />
+              <button type="button" class="btn-toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-error">Please enter your password.</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-do-login">Sign In</button>
+          <p class="auth-switch" style="margin-top:1rem">
+            No account? <a id="go-to-signup">Create one</a>
+          </p>
+        </div>
+        <!-- Signup Form -->
+        <div id="signup-panel" style="display:none;">
+          <div class="form-group" id="fg-su-name">
+            <label class="form-label" for="su-name">Full Name</label>
+            <input class="form-control" type="text" id="su-name" placeholder="Your name" />
+            <span class="form-error">Please enter your name.</span>
+          </div>
+          <div class="form-group" id="fg-su-email">
+            <label class="form-label" for="su-email">Email Address</label>
+            <input class="form-control" type="email" id="su-email" placeholder="you@example.com" />
+            <span class="form-error">Please enter a valid email.</span>
+          </div>
+          <div class="form-group" id="fg-su-pw">
+            <label class="form-label" for="su-password">Password</label>
+            <div class="password-wrapper">
+              <input class="form-control" type="password" id="su-password" placeholder="Create a password" />
+              <button type="button" class="btn-toggle-password" tabindex="-1" aria-label="Toggle password visibility">
+                <i class="fa-solid fa-eye"></i>
+              </button>
+            </div>
+            <span class="form-error">Password must be at least 6 characters.</span>
+          </div>
+          <button class="btn btn-primary btn-full" id="btn-do-signup">Create Account</button>
+          <p class="auth-switch" style="margin-top:1rem">
+            Already have an account? <a id="go-to-login">Sign in</a>
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/api_client.js"></script>
+  <script src="js/script.js"></script>
+  <script>
+    // View Services button – click bounce + ripple glow
+    document.addEventListener('DOMContentLoaded', () => {
+      const btn = document.getElementById('btn-view-services');
+      if (!btn) return;
+      btn.addEventListener('click', () => {
+        btn.classList.remove('clicked', 'ripple-ring');
+        void btn.offsetWidth; // force reflow to restart animation
+        btn.classList.add('clicked', 'ripple-ring');
+        setTimeout(() => btn.classList.remove('clicked', 'ripple-ring'), 500);
+      });
+    });
+  </script>
+</body>
+
+</html>
