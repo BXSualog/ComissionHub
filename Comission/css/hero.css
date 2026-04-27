@@ -1,0 +1,110 @@
+/* ===========================
+   HERO SECTION
+   =========================== */
+#hero {
+  min-height: 100vh;
+  display: flex !important;
+  align-items: center !important;
+  padding-top: var(--nav-height) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-align: left !important;
+}
+
+.hero-container {
+  width: 100%;
+  max-width: 1300px !important;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+.hero-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hero-content {
+  flex: 1.2;
+  position: relative;
+  z-index: 10;
+  max-width: 600px !important;
+}
+
+.hero-image-wrap {
+  flex: 1;
+  position: relative;
+  z-index: 5;
+  animation: floatImage 6s ease-in-out infinite;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.hero-image {
+  width: 100%;
+  max-width: 420px;
+  height: auto;
+  border-radius: 30px;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.6);
+  border: 3px solid var(--accent);
+  position: relative;
+  z-index: 2;
+}
+
+.hero-image-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 130%;
+  height: 130%;
+  background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+  opacity: 0.3;
+  filter: blur(50px);
+  z-index: 1;
+}
+
+@keyframes floatImage {
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-inner {
+    flex-direction: column !important;
+    text-align: center !important;
+    gap: 4rem !important;
+    padding-bottom: 5rem !important;
+  }
+
+  .hero-content {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    flex: none !important;
+    max-width: 100% !important;
+  }
+
+  .hero-desc {
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  .hero-image-wrap {
+    max-width: 500px !important;
+    width: 100% !important;
+    flex: none !important;
+  }
+}
