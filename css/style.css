@@ -367,6 +367,14 @@ section {
   background: var(--bg-secondary);
 }
 
+.form-control:read-only {
+  background: rgba(143, 125, 251, 0.05);
+  border-color: var(--border);
+  color: var(--text-secondary);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
 .form-control::placeholder {
   color: var(--text-muted);
 }

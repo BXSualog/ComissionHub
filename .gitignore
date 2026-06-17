@@ -1,8 +1,7 @@
-node_modules/
-.DS_Store
-.env
-key.txt
-*.log
-dist/
-build/
+# Ignore editor and dependency folders
 .vscode/
+node_modules/
+npm-debug.log*
+.DS_Store
+Thumbs.db
+

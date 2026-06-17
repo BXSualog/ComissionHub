@@ -1,111 +1,122 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', async () => {
-    const $ = (sel, ctx = document) => ctx.querySelector(sel);
-    const $$ = (sel, ctx = document) => Array.from(ctx.querySelectorAll(sel));
 
-    const res = await API.getSession();
-    const session = res.success ? res.user : null;
+    const $ = (selector, context = document) => context.querySelector(selector);
+    const $$ = (selector, context = document) => Array.from(context.querySelectorAll(selector));
 
-    if (session) {
-        const greetingName = $('.greeting-title .gradient-text');
-        if (greetingName) {
-            greetingName.textContent = session.name || 'Client';
+    const sessionResponse = await API.getSession();
+    const currentUser = sessionResponse.success ? sessionResponse.user : null;
+
+    if (currentUser) {
+        const greetingNameElement = $('.greeting-title .gradient-text');
+        if (greetingNameElement) {
+            greetingNameElement.textContent = currentUser.firstName || currentUser.first_name || 'Client';
         }
     }
 
-    function animateScroll(element, target, duration = 600) {
-        const start = element.scrollLeft;
-        const change = target - start;
-        let currentTime = 0;
-        const increment = 16;
+    function animateScroll(element, targetPosition, duration = 600) {
+        const startPosition = element.scrollLeft;
+        const distanceToMove = targetPosition - startPosition;
+        let timeElapsed = 0;
+        const timeBetweenFrames = 16;
 
         element.style.scrollSnapType = 'none';
 
-        const easeInOutQuart = (t, b, c, d) => {
-            t /= d / 2;
-            if (t < 1) return c / 2 * t * t * t * t + b;
-            t -= 2;
-            return -c / 2 * (t * t * t * t - 2) + b;
+        const easeInOutQuart = (time, start, change, duration) => {
+            time /= duration / 2;
+            if (time < 1) return change / 2 * time * time * time * time + start;
+            time -= 2;
+            return -change / 2 * (time * time * time * time - 2) + start;
         };
 
-        const animate = () => {
-            currentTime += increment;
-            const val = easeInOutQuart(currentTime, start, change, duration);
-            element.scrollLeft = val;
-            if (currentTime < duration) {
-                requestAnimationFrame(animate);
+        const moveStep = () => {
+            timeElapsed += timeBetweenFrames;
+            const newPosition = easeInOutQuart(timeElapsed, startPosition, distanceToMove, duration);
+            element.scrollLeft = newPosition;
+
+            if (timeElapsed < duration) {
+                requestAnimationFrame(moveStep);
             } else {
-                element.scrollLeft = target;
+                element.scrollLeft = targetPosition;
                 element.style.scrollSnapType = 'x mandatory';
             }
         };
 
-        requestAnimationFrame(animate);
+        requestAnimationFrame(moveStep);
     }
 
     function initCarousels() {
-        const containers = $$('.carousel-container');
-        containers.forEach(container => {
-            const wrapper = $('.carousel-wrapper', container);
-            const nextBtn = $('.next-btn', container);
-            const prevBtn = $('.prev-btn', container);
+        const carouselContainers = $$('.carousel-container');
+
+        carouselContainers.forEach(container => {
+            const scrollingWrapper = $('.carousel-wrapper', container);
+            const nextButton = $('.next-btn', container);
+            const prevButton = $('.prev-btn', container);
             
-            if (!wrapper) return;
+            if (!scrollingWrapper) return;
 
-            const isCategory = container.classList.contains('category-carousel');
-            let isAnimating = false;
+            const isCategoryCarousel = container.classList.contains('category-carousel');
+            let isCurrentlyAnimating = false;
 
-            const handleScroll = (direction) => {
-                if (isAnimating) return;
-                isAnimating = true;
+            const handleScrollClick = (direction) => {
+                if (isCurrentlyAnimating) return;
+                isCurrentlyAnimating = true;
 
-                const scrollAmount = isCategory ? (wrapper.clientWidth / 3) : wrapper.clientWidth;
-                const target = wrapper.scrollLeft + (direction * scrollAmount);
+                const scrollAmount = isCategoryCarousel 
+                    ? (scrollingWrapper.clientWidth / 3)
+                    : scrollingWrapper.clientWidth;
+
+                const targetScrollPosition = scrollingWrapper.scrollLeft + (direction * scrollAmount);
                 
-                animateScroll(wrapper, target, 600);
+                animateScroll(scrollingWrapper, targetScrollPosition, 600);
 
-                setTimeout(() => { isAnimating = false; }, 650);
+                setTimeout(() => { isCurrentlyAnimating = false; }, 650);
             };
 
-            nextBtn?.addEventListener('click', () => handleScroll(1));
-            prevBtn?.addEventListener('click', () => handleScroll(-1));
+            if (nextButton) nextButton.addEventListener('click', () => handleScrollClick(1));
+            if (prevButton) prevButton.addEventListener('click', () => handleScrollClick(-1));
         });
     }
 
     function initLightbox() {
         const modal = $('#lightbox-modal');
-        const img = $('#lightbox-img');
-        const caption = $('#lightbox-caption');
-        const closeBtn = $('.lightbox-close');
+        const largeImage = $('#lightbox-img');
+        const captionText = $('#lightbox-caption');
+        const closeButton = $('.lightbox-close');
 
-        if (!modal || !img) return;
+        if (!modal || !largeImage) return;
 
-        $$('.carousel-slide img').forEach(slideImg => {
-            slideImg.style.cursor = 'zoom-in';
-            slideImg.addEventListener('click', () => {
-                const parentSlide = slideImg.closest('.carousel-slide');
+        const images = $$('.carousel-slide img');
+
+        images.forEach(imgElement => {
+            imgElement.style.cursor = 'zoom-in';
+
+            imgElement.addEventListener('click', () => {
+                const parentSlide = imgElement.closest('.carousel-slide');
                 const title = parentSlide.querySelector('h3')?.textContent || '';
                 
-                img.src = slideImg.src;
-                caption.textContent = title;
+                largeImage.src = imgElement.src;
+                captionText.textContent = title;
+                
                 modal.classList.add('open');
                 document.body.style.overflow = 'hidden';
             });
         });
 
-        const closeModal = () => {
+        const hideModal = () => {
             modal.classList.remove('open');
             document.body.style.overflow = '';
         };
 
-        closeBtn?.addEventListener('click', closeModal);
-        modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
+        if (closeButton) closeButton.addEventListener('click', hideModal);
+
+        modal.addEventListener('click', (event) => {
+            if (event.target === modal) hideModal();
         });
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') closeModal();
+        window.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') hideModal();
         });
     }
 
@@ -138,28 +149,31 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     const pricingModal = $('#pricing-modal');
-    const pricingClose = $('#pricing-modal-close');
+    const pricingCloseButton = $('#pricing-modal-close');
     const pricingGrid = $('#pricing-grid');
     const pricingHeading = $('#pricing-modal-heading');
 
-    function openPricingModal(category) {
+    function showPricingForCategory(categoryName) {
         if (!pricingModal || !pricingGrid) return;
 
-        pricingHeading.textContent = `${category} - Pricing`;
+        pricingHeading.textContent = `${categoryName} - Pricing`;
+        
         pricingGrid.innerHTML = '';
 
-        const plans = CATEGORY_PRICING[category] || CATEGORY_PRICING["Graphics Designing"];
+        const plans = CATEGORY_PRICING[categoryName] || CATEGORY_PRICING["Graphics Designing"];
 
         plans.forEach(plan => {
-            const featuresHtml = plan.features.map(f => `<li><i class="fa-solid fa-check"></i> ${f}</li>`).join('');
+            const featuresHtml = plan.features
+                .map(feature => `<li><i class="fa-solid fa-check"></i> ${feature}</li>`)
+                .join('');
             
-            let tierClass = '';
-            if (plan.tier.includes('Silver')) tierClass = 'tier-silver';
-            else if (plan.tier.includes('Gold')) tierClass = 'tier-gold';
-            else if (plan.tier.includes('Diamond')) tierClass = 'tier-diamond';
+            let colorClass = '';
+            if (plan.tier.includes('Silver')) colorClass = 'tier-silver';
+            else if (plan.tier.includes('Gold')) colorClass = 'tier-gold';
+            else if (plan.tier.includes('Diamond')) colorClass = 'tier-diamond';
 
             pricingGrid.innerHTML += `
-                <div class="pricing-tier ${tierClass}">
+                <div class="pricing-tier ${colorClass}">
                     <h4 class="tier-name">${plan.tier}</h4>
                     <div class="pricing-price">${plan.price}</div>
                     <ul class="pricing-features">
@@ -173,25 +187,27 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.body.style.overflow = 'hidden';
     }
 
-    function closePricingModal() {
+    function hidePricingModal() {
         if (!pricingModal) return;
         pricingModal.classList.remove('open');
         document.body.style.overflow = '';
     }
 
-    $$('.btn-pricing').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            const category = btn.getAttribute('data-category');
-            openPricingModal(category);
+    const pricingButtons = $$('.btn-pricing');
+    
+    pricingButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const categoryName = btn.getAttribute('data-category');
+            showPricingForCategory(categoryName);
         });
     });
 
-    if (pricingClose) {
-        pricingClose.addEventListener('click', closePricingModal);
+    if (pricingCloseButton) {
+        pricingCloseButton.addEventListener('click', hidePricingModal);
     }
     if (pricingModal) {
-        pricingModal.addEventListener('click', (e) => {
-            if (e.target === pricingModal) closePricingModal();
+        pricingModal.addEventListener('click', (event) => {
+            if (event.target === pricingModal) hidePricingModal();
         });
     }
 

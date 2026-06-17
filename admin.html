@@ -36,10 +36,10 @@
           <p class="admin-login-subtitle">Admin Panel – Restricted Access</p>
         </div>
 
-        <div class="form-group" id="fg-adm-user">
-          <label class="form-label" for="adm-user">Username</label>
-          <input class="form-control" type="text" id="adm-user" placeholder="admin" autocomplete="username" />
-          <span class="form-error">Please enter the username.</span>
+        <div class="form-group" id="fg-adm-email">
+          <label class="form-label" for="adm-email">Admin</label>
+          <input class="form-control" type="text" id="adm-email" placeholder="admin" autocomplete="email" />
+          <span class="form-error">Required.</span>
         </div>
         <div class="form-group" id="fg-adm-pw">
           <label class="form-label" for="adm-pw">Password</label>
@@ -218,14 +218,14 @@
           <div class="users-panel" id="users-panel" style="display:none;">
             <div class="history-panel">
               <div class="history-header">
-                <span class="toolbar-title"><h3>Sualog |  Valenciano | Miranda | Felizardo | Delfin</h3></span>
+                <span class="toolbar-title"><h3>User Lists</h3></span>
                 <span class="history-subtitle">Manage client accounts</span>
               </div>
               <div class="table-wrap">
                 <table> 
                   <thead>
                     <tr>
-                      <th>ID</th>
+                      <th>No.</th>
                       <th>Name</th>
                       <th>Email</th>
                       <th>Joined</th>
@@ -368,13 +368,20 @@
       </div>
       <div class="modal-body">
         <input type="hidden" id="edit-user-id" />
-        <div class="form-group">
-          <label class="form-label" for="edit-user-name">Name</label>
-          <input class="form-control" type="text" id="edit-user-name" />
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="edit-user-fname">First Name</label>
+            <input class="form-control" type="text" id="edit-user-fname" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="edit-user-lname">Last Name</label>
+            <input class="form-control" type="text" id="edit-user-lname" />
+          </div>
         </div>
         <div class="form-group mt-3">
           <label class="form-label" for="edit-user-email">Email Address</label>
-          <input class="form-control" type="email" id="edit-user-email" />
+          <input class="form-control" type="email" id="edit-user-email" placeholder="client@gmail.com" />
+          <span class="form-error">Required Gmail (@gmail.com).</span>
         </div>
       </div>
       <div class="modal-footer confirm-modal-footer">
@@ -384,7 +391,7 @@
     </div>
   </div>
 
-  <script src="js/api_client.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/script.js"></script>
 </body>
 </html>

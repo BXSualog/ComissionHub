@@ -106,7 +106,7 @@
             <div class="commission-inner-form-grid">
               <div class="form-group" id="fg-name">
                 <label class="form-label" for="req-name">Full Name *</label>
-                <input class="form-control" type="text" id="req-name" name="name" placeholder="Your full name" autocomplete="name" />
+                <input class="form-control" type="text" id="req-name" name="name" placeholder="Your full name" autocomplete="name" readonly />
                 <span class="form-error">Please enter your full name.</span>
               </div>
               <div class="form-group" id="fg-email">
@@ -123,7 +123,6 @@
                   <option value="Voice Acting">Voice Acting</option>
                   <option value="Photo & Video Editing">Photo &amp; Video Editing</option>
                   <option value="Game Assets Designing">Game Assets Designing</option>
-                  <option value="Other">Other</option>
                 </select>
                 <span class="form-error">Please select a service type.</span>
               </div>
@@ -157,19 +156,6 @@
               </div>
               
               <div class="form-group full" id="fg-upload">
-                <div class="file-upload-container">
-                  <div class="file-upload-area" id="drop-area">
-                    <div class="file-upload-message">
-                      <i class="fas fa-cloud-upload-alt"></i>
-                      <h3>Drag & Drop Files Here <span style="font-size: 0.7em; opacity: 0.7; font-weight: normal; display: block; margin-top: 0.2rem;">(Optional)</span></h3>
-                      <p>or</p>
-                      <label for="fileUpload" class="file-upload-btn">Browse Files</label>
-                      <input type="file" id="fileUpload" multiple hidden>
-                      <p class="file-upload-info">Supports: JPG, PNG, PDF, DOC, MP4 (Max: 10MB) <span class="badge"><i class="fas fa-plus-circle"></i> Fonts</span></p>
-                    </div>
-                    <div class="file-upload-preview" id="previewArea"></div>
-                  </div>
-                </div>
               </div>
             </div>
             <button type="submit" class="btn btn-primary btn-full form-submit-btn" id="submit-btn">
@@ -211,7 +197,7 @@
 
   <!-- ===================== NOTIFICATIONS MODAL ===================== -->
   <div class="modal-overlay" id="notifications-modal" role="dialog" aria-modal="true" aria-labelledby="notif-modal-heading">
-    <div class="modal">
+    <div class="modal" style="max-width:480px;width:95%;">
       <div class="modal-header">
         <h3 id="notif-modal-heading"><i class="fa-solid fa-bell" style="margin-right:.5rem;color:var(--accent)"></i>Notifications</h3>
         <button class="modal-close" id="notif-modal-close" aria-label="Close">✕</button>
@@ -225,7 +211,7 @@
     </div>
   </div>
 
-  <script src="js/api_client.js"></script>
+  <script src="js/api.js"></script>
   <script src="js/script.js"></script>
   <script src="js/commission.js"></script>
 </body>
